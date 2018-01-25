@@ -153,6 +153,7 @@ class RESTController(BaseController):
                    in self._method_mapping.items()
                    if _is_element == is_element and hasattr(self, meth)]
         cherrypy.response.headers['Allow'] = ','.join(methods)
+        cherrypy.response.headers['Content-Type'] = 'application/json'
         raise cherrypy.HTTPError(405, 'Method not implemented.')
 
     _method_mapping = {

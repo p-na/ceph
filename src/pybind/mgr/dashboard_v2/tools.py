@@ -170,8 +170,7 @@ class RESTController(BaseController):
 
     @cherrypy.expose
     def default(self, *vpath, **params):
-        cherrypy.config.update({
-            'error_page.default': _json_error_page})
+
         is_element = len(vpath) > 0
 
         (method_name, status_code) = self._method_mapping[

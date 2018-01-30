@@ -71,6 +71,7 @@ def load_controllers(mgrmodule):
 
 
 def _json_error_page(status, message, traceback, version):
+    cherrypy.response.headers['Content-Type'] = 'application/json'
     return json.dumps(dict(status=status, detail=message, traceback=traceback,
                            version=version))
 

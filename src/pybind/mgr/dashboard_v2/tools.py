@@ -59,7 +59,7 @@ def load_controllers(mgrmodule):
     mods = [mod for _, mod, _ in pkgutil.iter_modules([ctrls_path])]
     for mod_name in mods:
         mod = importlib.import_module('.controllers.{}'.format(mod_name),
-                                      package='dashboard_v2')
+                                    package='dashboard_v2')
         for _, cls in mod.__dict__.items():
             # Controllers MUST be derived from the class BaseController.
             if isinstance(cls, BaseControllerMeta) and \

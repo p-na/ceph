@@ -29,3 +29,4 @@ tempora==1.10
 tox==2.9.1
 virtualenv==15.1.0
 wrapt==1.10.11
+requests-aws==0.1.8

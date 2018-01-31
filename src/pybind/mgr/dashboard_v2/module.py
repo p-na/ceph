@@ -16,8 +16,8 @@ from .settings import Settings, options_command_list, handle_option_command
 from .components.rgw_client import RgwClient
 
 import sys
-# sys.path.append('/ceph/src/pybind/mgr/dashboard_v2/pycharm-debug.egg')
-# import pydevd
+sys.path.append('/ceph/src/pybind/mgr/dashboard_v2/pycharm-debug.egg')
+import pydevd
 
 
 # cherrypy likes to sys.exit on error.  don't let it take us down too!
@@ -28,8 +28,6 @@ def os_exit_noop(*args):
 
 # pylint: disable=W0212
 os._exit = os_exit_noop
-
-
 
 
 class Module(MgrModule):

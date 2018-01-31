@@ -14,3 +14,6 @@ else:
     # pylint: disable=W0403
     from . import ceph_module_mock
     sys.modules['ceph_module'] = ceph_module_mock
+    # The following line is expected to throw errors if the rados module is used within the source
+    # code but this line hasn't been adapted to make the tests running!
+    sys.modules['rados'] = object()

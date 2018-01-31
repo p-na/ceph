@@ -14,7 +14,7 @@
 """
 from __future__ import absolute_import
 
-from ..utilities import build_url
+from ..tools import build_url
 import inspect
 import itertools
 import logging

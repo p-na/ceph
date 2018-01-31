@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+import unittest
 import cherrypy
 from cherrypy.lib.sessions import RamSession
 from cherrypy.test import helper
 from mock import patch
 
 from .helper import RequestHelper
-from ..tools import RESTController
+from ..tools import RESTController, is_valid_ipv6_address
 
 
 # pylint: disable=W0613
@@ -78,3 +79,14 @@ class RESTControllerTest(helper.CPWebCase, RequestHelper):
     def test_args_from_json(self):
         self._put("/fooargs/hello", {'name': 'world'})
         self.assertJsonBody({'code': 'hello', 'name': 'world'})
+
+
+class IpTest(unittest.TestCase):
+
+    def test_is_valid_ipv6_address(self):
+        self.assertTrue(is_valid_ipv6_address('::'))
+        self.assertTrue(is_valid_ipv6_address('::1'))
+        self.assertFalse(is_valid_ipv6_address('127.0.0.1'))
+        self.assertFalse(is_valid_ipv6_address('localhost'))
+        self.assertTrue(is_valid_ipv6_address('1200:0000:AB00:1234:0000:2552:7777:1313'))
+        self.assertFalse(is_valid_ipv6_address('1200::AB00:1234::2552:7777:1313'))

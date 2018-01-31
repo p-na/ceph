@@ -5,7 +5,7 @@ import logging
 from awsauth import S3Auth
 # from oa_settings import Settings
 from ..components.rest_client import RestClient, RequestException
-from ..utilities import build_url
+from ..tools import build_url
 
 logger = logging.getLogger(__name__)
 
@@ -32,14 +32,6 @@ class RgwClient(RestClient):
             'format': 'json'
         })
         return response[0]['ID'] == 'online'
-
-    @RestClient.api_get('/{admin_path}/metadata/user', resp_structure='[+]')
-    def _is_system_user(self, admin_path, request=None):
-        response = request()
-        return self.userid in response
-
-    def is_system_user(self):
-        return self._is_system_user(self.admin_path)
 
     @RestClient.api_get('/{admin_path}/user', resp_structure='tenant & user_id & email & keys[*] > '
                                                              ' (user & access_key & secret_key)')

@@ -10,8 +10,6 @@ from ..components.rgw_client import RgwClient
 @ApiController('rgw')
 class Rgw(RESTController):
     def __init__(self):
-        self.mgr = Rgw._mgr_module_
-
         self.access_key = self.mgr.get_localized_config('rgw_access_key', '')
         self.secret_key = self.mgr.get_localized_config('rgw_secret_key', '')
 

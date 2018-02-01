@@ -8,7 +8,7 @@ from cherrypy.test import helper
 from mock import patch
 
 from .helper import RequestHelper
-from ..tools import RESTController, is_valid_ipv6_address
+from ..tools import RESTController, is_valid_ipv6_address, isset
 
 
 # pylint: disable=W0613
@@ -81,7 +81,7 @@ class RESTControllerTest(helper.CPWebCase, RequestHelper):
         self.assertJsonBody({'code': 'hello', 'name': 'world'})
 
 
-class IpTest(unittest.TestCase):
+class TestFunctions(unittest.TestCase):
 
     def test_is_valid_ipv6_address(self):
         self.assertTrue(is_valid_ipv6_address('::'))
@@ -90,3 +90,9 @@ class IpTest(unittest.TestCase):
         self.assertFalse(is_valid_ipv6_address('localhost'))
         self.assertTrue(is_valid_ipv6_address('1200:0000:AB00:1234:0000:2552:7777:1313'))
         self.assertFalse(is_valid_ipv6_address('1200::AB00:1234::2552:7777:1313'))
+
+    def test_isset(self):
+        x = {'a': {'b': {'c': 'foo'}}}
+        self.assertTrue(isset(x, ['a', 'b', 'c']))
+        self.assertTrue(isset(x, ['a']))
+        self.assertFalse(isset(x, ['a', 'c']))

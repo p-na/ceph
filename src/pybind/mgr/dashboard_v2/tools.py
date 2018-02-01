@@ -71,6 +71,7 @@ def load_controllers(mgrmodule):
 
 
 def _json_error_page(status, message, traceback, version):
+    return '<pre>{tb}</pre>'.format(tb=traceback)
     cherrypy.response.headers['Content-Type'] = 'application/json'
     return json.dumps(dict(status=status, detail=message, traceback=traceback,
                            version=version))
@@ -312,3 +313,21 @@ def build_url(host, scheme=None, port=None):
         netloc += ':{}'.format(port)
     pr = ParseResult(scheme=scheme, netloc=netloc, path='', params='', query='', fragment='')
     return pr.geturl()
+
+
+def isset(dct, keys):
+    """
+    Tests wheter the keys exist recursively in `dictionary`.
+
+    :type dct: dict
+    :type keys: list
+    :rtype: bool
+    """
+    if keys:
+        key = keys.pop(0)
+        if key in dct:
+            dct = dct[key]
+            return isset(dct, keys)
+        else:
+            return False
+    return True

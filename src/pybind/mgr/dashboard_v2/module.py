@@ -15,7 +15,7 @@ from .tools import load_controllers, _json_error_page
 from .settings import Settings, options_command_list, handle_option_command
 from .components.rgw_client import RgwClient
 
-import sys
+import sys  # TODO remove
 sys.path.append('/ceph/src/pybind/mgr/dashboard_v2/pycharm-debug.egg')
 import pydevd
 

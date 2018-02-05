@@ -16,7 +16,7 @@ import six
 import cherrypy
 
 
-def ApiController(path):
+def ApiController(path=''):
     def decorate(cls):
         cls._cp_controller_ = True
         cls._cp_path_ = path

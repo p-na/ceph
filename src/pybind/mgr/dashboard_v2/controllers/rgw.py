@@ -10,15 +10,12 @@ from .. import logger
 @ApiController('rgw')
 @AuthRequired()
 class Rgw(RESTController):
-
-    def __init__(self):
-        self.daemon = RgwDaemon(self.mgr)
+    pass
 
 
+@ApiController('rgw/daemon')
+@AuthRequired()
 class RgwDaemon(RESTController):
-
-    def __init__(self, mgr):
-        RgwDaemon.mgr = mgr
 
     def list(self):
         daemons = []
@@ -82,3 +79,11 @@ class RgwDaemon(RESTController):
 
                     break
         return daemon
+
+
+@ApiController('rgw/daemon/test')
+@AuthRequired()
+class RgwDaemonTest(RESTController):
+
+    def list(self):
+        return ['foo', 'bar', 'baz']

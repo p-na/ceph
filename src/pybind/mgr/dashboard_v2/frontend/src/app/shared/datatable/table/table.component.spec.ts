@@ -1,8 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { NgxDatatableModule, TableColumn } from '@swimlane/ngx-datatable';
 
+import { ComponentsModule } from '../../components/components.module';
 import { TableComponent } from './table.component';
 
 describe('TableComponent', () => {
@@ -25,7 +27,7 @@ describe('TableComponent', () => {
     async(() => {
       TestBed.configureTestingModule({
         declarations: [TableComponent],
-        imports: [NgxDatatableModule, FormsModule]
+        imports: [NgxDatatableModule, FormsModule, ComponentsModule, RouterTestingModule]
       }).compileComponents();
     })
   );

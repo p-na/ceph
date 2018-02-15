@@ -15,7 +15,7 @@ import {
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import * as _ from 'lodash';
 
-import { CdTableColumn } from '../../../models/cd-table-column';
+import { CdTableColumn } from '../../models/cd-table-column';
 import { TableDetailsDirective } from '../table-details.directive';
 
 @Component({
@@ -27,6 +27,8 @@ export class TableComponent implements AfterContentChecked, OnInit, OnChanges {
   @ViewChild(DatatableComponent) table: DatatableComponent;
   @ViewChild(TableDetailsDirective) detailTemplate: TableDetailsDirective;
   @ViewChild('tableCellBoldTpl') tableCellBoldTpl: TemplateRef<any>;
+  @ViewChild('sparklineTpl') sparklineTpl: TemplateRef<any>;
+  @ViewChild('routerLinkTpl') routerLinkTpl: TemplateRef<any>;
 
   // This is the array with the items to be shown.
   @Input() data: any[];
@@ -100,6 +102,8 @@ export class TableComponent implements AfterContentChecked, OnInit, OnChanges {
 
   _addTemplates () {
     this.cellTemplates.bold = this.tableCellBoldTpl;
+    this.cellTemplates.sparkline = this.sparklineTpl;
+    this.cellTemplates.routerLink = this.routerLinkTpl;
   }
 
   ngOnChanges(changes) {

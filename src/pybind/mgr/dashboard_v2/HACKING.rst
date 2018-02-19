@@ -405,6 +405,10 @@ The settings management implementation will make sure that if you change a
 setting value from the python code you will see that change when accessing
 that setting from the CLI and vice-versa.
 
+These settings are stored in the monitor config-keys.  You will only see values
+there when they have manually been set, otherwise the defaults of the `Options`
+class are being used.
+
 
 How to listen for manager notifications in a controller?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

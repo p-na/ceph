@@ -73,8 +73,6 @@ class RbdMirroringControllerTest(ControllerTestCase, CPWebCase):
         mgr_mock.get_mgr_id.return_value = 0
         mgr_mock.have_mon_connection.return_value = True
 
-        Service.mgr = mgr_mock
-
         RbdMirror.mgr = mgr_mock
         RbdMirror._cp_config['tools.authenticate.on'] = False  # pylint: disable=protected-access
 

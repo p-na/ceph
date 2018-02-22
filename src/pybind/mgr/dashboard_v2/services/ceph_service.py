@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-from . import Service
 
+class CephServiceMixin(object):
 
-class CephService(Service):
     @classmethod
     def get_service_map(cls, service_name):
         service_map = {}

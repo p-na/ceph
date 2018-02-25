@@ -9,7 +9,6 @@ import time
 import cherrypy
 from mgr_module import CommandResult
 
-from ..services.ceph_service import CephServiceMixin
 from ..tools import ApiController, AuthRequired, BaseController, NotificationQueue, ViewCache
 
 
@@ -18,7 +17,7 @@ LOG_BUFFER_SIZE = 30
 
 @ApiController('dashboard')
 @AuthRequired()
-class Dashboard(BaseController, CephServiceMixin):
+class Dashboard(BaseController):
     def __init__(self):
         super(Dashboard, self).__init__()
 

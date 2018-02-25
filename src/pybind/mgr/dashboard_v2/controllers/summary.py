@@ -11,7 +11,7 @@ from .. import logger
 
 
 @ApiController('summary')
-@AuthRequired()
+# @AuthRequired()
 class Summary(BaseController, CephServiceMixin, CephPoolMixin):
     def _rbd_pool_data(self):
         pool_names = [pool['pool_name'] for pool in self.get_pool_list('rbd')]
@@ -32,9 +32,12 @@ class Summary(BaseController, CephServiceMixin, CephPoolMixin):
         ]
 
     def _rbd_mirroring(self):
-        _, data = self.get_daemons_and_pools(self.mgr)
+        data = self.get_daemons_and_pools()
 
         if isinstance(data, Exception):
+            # import sys; sys.path.append('/tmp/py2-eggs/pycharm-debug.egg')
+            # import pydevd; pydevd.settrace('localhost', port=22222)
+
             logger.exception("Failed to get rbd-mirror daemons and pools")
             raise type(data)(str(data))
         else:

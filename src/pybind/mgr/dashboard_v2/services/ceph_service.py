@@ -68,7 +68,7 @@ def _get_daemons(mgr):
                 'metadata': metadata,
                 'status': status
             }
-            daemon = dict(daemon, _get_daemon_health(daemon))
+            daemon = dict(daemon, **_get_daemon_health(daemon))
             daemons.append(daemon)
 
     return sorted(daemons, key=lambda k: k['instance_id'])

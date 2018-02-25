@@ -218,9 +218,9 @@ class CephPoolMixin(object):
         return pool_stats
 
     @classmethod
-    @ViewCache
-    def get_daemons_and_pools(cls, mgr):
-        daemons = _get_daemons(mgr)
+    @ViewCache()
+    def get_daemons_and_pools(cls):
+        daemons = _get_daemons(cls.mgr)
         return {
             'daemons': daemons,
             'pools': cls.get_pools(daemons),

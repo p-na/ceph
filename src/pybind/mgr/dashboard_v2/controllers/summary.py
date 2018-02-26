@@ -11,7 +11,7 @@ from .. import logger
 
 
 @ApiController('summary')
-# @AuthRequired()
+@AuthRequired()
 class Summary(BaseController, CephServiceMixin, CephPoolMixin):
     def _rbd_pool_data(self):
         pool_names = [pool['pool_name'] for pool in self.get_pool_list('rbd')]

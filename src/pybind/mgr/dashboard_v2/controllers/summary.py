@@ -35,9 +35,6 @@ class Summary(BaseController, CephServiceMixin, CephPoolMixin):
         data = self.get_daemons_and_pools()
 
         if isinstance(data, Exception):
-            # import sys; sys.path.append('/tmp/py2-eggs/pycharm-debug.egg')
-            # import pydevd; pydevd.settrace('localhost', port=22222)
-
             logger.exception("Failed to get rbd-mirror daemons and pools")
             raise type(data)(str(data))
         else:

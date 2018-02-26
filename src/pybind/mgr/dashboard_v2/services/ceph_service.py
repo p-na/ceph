@@ -32,11 +32,11 @@ def _get_service_map(mgr, service_name):
 
 
 def _get_pool_list(mgr, application=None):
-        osd_map = mgr.get('osd_map')
-        if not application:
-            return osd_map['pools']
-        return [pool for pool in osd_map['pools']
-                if application in pool.get('application_metadata', {})]
+    osd_map = mgr.get('osd_map')
+    if not application:
+        return osd_map['pools']
+    return [pool for pool in osd_map['pools']
+            if application in pool.get('application_metadata', {})]
 
 
 def _get_daemons(mgr):
@@ -225,5 +225,3 @@ class CephPoolMixin(object):
             'daemons': daemons,
             'pools': cls.get_pools(daemons),
         }
-
-

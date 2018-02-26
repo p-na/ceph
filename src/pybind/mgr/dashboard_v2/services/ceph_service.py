@@ -161,6 +161,7 @@ class CephPoolMixin(object):
                 logger.exception("Failed to open pool %s", pool_name)
                 continue
 
+            mirror_mode = rbd.RBD_MIRROR_MODE_DISABLED
             try:
                 mirror_mode = rbdctx.mirror_mode_get(ioctx)
             except:  # noqa pylint: disable=W0702

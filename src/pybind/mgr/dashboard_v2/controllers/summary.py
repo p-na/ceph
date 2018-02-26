@@ -36,7 +36,7 @@ class Summary(BaseController, CephServiceMixin, CephPoolMixin):
 
         if isinstance(data, Exception):
             logger.exception("Failed to get rbd-mirror daemons and pools")
-            raise type(data)(str(data))
+            raise type(data)(str(data))  # pylint: disable=E0710
         else:
             daemons = data.get('daemons', [])
             pools = data.get('pools', {})

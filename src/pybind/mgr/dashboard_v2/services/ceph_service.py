@@ -219,6 +219,7 @@ class CephPoolMixin(object):
         return pool_stats
 
     @classmethod
+    @ViewCache()
     def get_daemons_and_pools(cls):
         daemons = _get_daemons(cls.mgr)
         return {

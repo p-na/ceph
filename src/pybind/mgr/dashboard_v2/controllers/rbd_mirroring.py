@@ -109,7 +109,7 @@ class RbdMirror(BaseController, CephServiceMixin, CephPoolMixin):
             return value
 
         pool_names = [pool['pool_name'] for pool in self.get_pool_list('rbd')]
-        data = self.get_daemons_and_pools()
+        _, data = self.get_daemons_and_pools()
         if data is None:
             logger.warning("Failed to get rbd-mirror daemons list")
             data = {}

@@ -32,7 +32,7 @@ class Summary(BaseController, CephServiceMixin, CephPoolMixin):
         ]
 
     def _rbd_mirroring(self):
-        data = self.get_daemons_and_pools()
+        _, data = self.get_daemons_and_pools()
 
         if isinstance(data, Exception):
             logger.exception("Failed to get rbd-mirror daemons and pools")

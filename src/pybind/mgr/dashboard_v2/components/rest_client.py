@@ -16,17 +16,15 @@ from __future__ import absolute_import
 from ..tools import build_url
 import inspect
 import itertools
-import logging
 import re
 import requests
 from requests.exceptions import ConnectionError, InvalidURL
+from .. import logger
 
 try:
     from requests.packages.urllib3.exceptions import SSLError
 except ImportError:
     from urllib3.exceptions import SSLError
-
-logger = logging.getLogger(__name__)
 
 
 class RequestException(Exception):

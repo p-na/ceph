@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-import logging
 from awsauth import S3Auth
 # from oa_settings import Settings
 from ..components.rest_client import RestClient, RequestException
 from ..tools import build_url
-
-logger = logging.getLogger(__name__)
+from .. import logger
 
 
 class RgwClient(RestClient):

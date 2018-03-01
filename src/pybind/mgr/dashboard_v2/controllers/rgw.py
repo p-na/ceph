@@ -80,23 +80,10 @@ class RgwDaemon(RESTController):
 class RgwProxy(RESTController):
     @cherrypy.expose
     def default(self, *vpath, **params):
-        try:
-            host, port = self._determine_rgw_addr()
-        except LookupError as e:
-            msg = 'Couldn\'t determine RGW address: {}'
-            logger.exception(msg.format(e.message))
-            return {'error': msg.format(e.message)}
+        host, port = self._determine_rgw_addr()
 
         access_key, secret_key = self._load_rgw_credentials()
-
-        try:
-            rgw_client = RgwClient(access_key, secret_key, host=host,
-                                   port=port)
-        except RgwClient.NoCredentialsException as e:
-            cherrypy.response.headers['Content-Type'] = 'application/json'
-            cherrypy.response.headers.status = 400
-            return {'error': 'No credentials found for accessing RGW Admin Ops'
-                             ' API: {}'.format(e.message)}
+        rgw_client = RgwClient(access_key, secret_key, host=host, port=port)
 
         method = cherrypy.request.method
         path = '/'.join(vpath)
@@ -112,7 +99,6 @@ class RgwProxy(RESTController):
         secret_key = Settings.RGW_API_SECRET_KEY
         if not (access_key or secret_key):
             msg = 'No RGW access_key or secret_key provided.'
-            logger.exception(msg)
             raise LookupError(msg)
 
         return access_key, secret_key
@@ -123,14 +109,12 @@ class RgwProxy(RESTController):
 
         if not isset(service_map, ['services', 'rgw', 'daemons', 'rgw']):
             msg = 'No RGW found.'
-            logger.exception(msg)
             raise LookupError(msg)
 
         daemon = service_map['services']['rgw']['daemons']['rgw']
         if daemon['metadata']['zonegroup_name'] != 'default' or \
                 daemon['metadata']['zone_name'] != 'default':
             msg = 'Automatically determining RGW daemon failed.'
-            logger.exception(msg)
             raise LookupError(msg)
 
         addr = daemon['addr'].split(':')[0]
@@ -139,7 +123,6 @@ class RgwProxy(RESTController):
             port = int(match.group(1))
         else:
             msg = 'Failed to determine RGW port'
-            logger.exception(msg)
             raise LookupError(msg)
 
         return addr, port

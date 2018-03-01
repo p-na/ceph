@@ -13,21 +13,19 @@ class Options(object):
     If you need to store some configuration value please add the config option
     name as a class attribute to this class.
     """
-    # Grafana settings
-    GRAFANA_API_HOST = ('localhost', str)
-    GRAFANA_API_PORT = (3000, int)
-    GRAFANA_API_USERNAME = ('admin', str)
-    GRAFANA_API_PASSWORD = ('admin', str)
-    GRAFANA_API_SCHEME = ('http', str)
-
     # RGW settings
     RGW_API_HOST = ('', str)
     RGW_API_PORT = (80, int)
     RGW_API_ACCESS_KEY = ('', str)
     RGW_API_SECRET_KEY = ('', str)
     RGW_API_ADMIN_RESOURCE = ('admin', str)
-    RGW_API_USER_ID = ('', str)
     RGW_API_SCHEME = ('http', str)
+    RGW_API_USER_ID = ('', str)
+
+    @staticmethod
+    def has_default_value(name):
+        return getattr(Settings, name, None) is None or \
+               getattr(Settings, name) == getattr(Options, name)[0]
 
 
 class SettingsMeta(type):

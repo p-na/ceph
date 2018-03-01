@@ -3,12 +3,13 @@ from __future__ import absolute_import
 
 import json
 
+import unittest
 import cherrypy
 from cherrypy.lib.sessions import RamSession
 from cherrypy.test import helper
 from mock import patch
 
-from ..tools import RESTController, detail_route
+from ..tools import RESTController, detail_route, is_valid_ipv6_address, isset
 
 
 # pylint: disable=W0613
@@ -131,3 +132,20 @@ class RESTControllerTest(helper.CPWebCase):
 
         self._post('/foo/1/detail', 'post-data')
         self.assertStatus(405)
+
+
+class TestFunctions(unittest.TestCase):
+
+    def test_is_valid_ipv6_address(self):
+        self.assertTrue(is_valid_ipv6_address('::'))
+        self.assertTrue(is_valid_ipv6_address('::1'))
+        self.assertFalse(is_valid_ipv6_address('127.0.0.1'))
+        self.assertFalse(is_valid_ipv6_address('localhost'))
+        self.assertTrue(is_valid_ipv6_address('1200:0000:AB00:1234:0000:2552:7777:1313'))
+        self.assertFalse(is_valid_ipv6_address('1200::AB00:1234::2552:7777:1313'))
+
+    def test_isset(self):
+        x = {'a': {'b': {'c': 'foo'}}}
+        self.assertTrue(isset(x, ['a', 'b', 'c']))
+        self.assertTrue(isset(x, ['a']))
+        self.assertFalse(isset(x, ['a', 'c']))

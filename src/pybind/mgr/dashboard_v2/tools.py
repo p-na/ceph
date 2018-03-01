@@ -16,7 +16,7 @@ import threading
 from errno import errorcode
 try:
     from urlparse import ParseResult
-except:
+except ImportError:
     from urllib.parse import ParseResult
 
 import cherrypy
@@ -544,6 +544,5 @@ def isset(dct, keys):
         if key in dct:
             dct = dct[key]
             return isset(dct, keys)
-        else:
-            return False
+        return False
     return True

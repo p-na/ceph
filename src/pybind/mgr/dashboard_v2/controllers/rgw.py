@@ -83,7 +83,8 @@ class RgwProxy(RESTController):
         host, port = self._determine_rgw_addr()
 
         access_key, secret_key = self._load_rgw_credentials()
-        rgw_client = RgwClient(access_key, secret_key, host=host, port=port)
+        rgw_client = RgwClient(access_key, secret_key, host=host, port=port,
+                               admin_path=Settings.RGW_API_ADMIN_RESOURCE)
 
         method = cherrypy.request.method
         path = '/'.join(vpath)

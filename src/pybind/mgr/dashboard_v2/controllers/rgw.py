@@ -6,9 +6,9 @@ import re
 
 import cherrypy
 
-from .. import logger, mgr
+from .. import logger
 from ..services.ceph_service import CephService
-from ..tools import ApiController, RESTController, AuthRequired, isset
+from ..tools import ApiController, RESTController, AuthRequired
 from ..components.rgw_client import RgwClient
 
 

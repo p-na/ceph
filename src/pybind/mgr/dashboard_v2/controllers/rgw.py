@@ -81,7 +81,7 @@ class RgwProxy(RESTController):
     @cherrypy.expose
     def default(self, *vpath, **params):
         host, port = Settings.RGW_API_HOST, Settings.RGW_API_PORT
-        if not (host or port):
+        if not (host and port):
             host, port = self._determine_rgw_addr()
 
         access_key, secret_key = self._load_rgw_credentials()

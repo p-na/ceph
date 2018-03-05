@@ -57,13 +57,14 @@ class RgwClient(RestClient):
         RgwClient._host = host
         RgwClient._port = port
         RgwClient._ssl = Settings.RGW_API_SCHEME == 'https'
-        logger.info("Creating new connection for user: %s",
-                    Settings.RGW_API_USER_ID)
         RgwClient._ADMIN_PATH = Settings.RGW_API_ADMIN_RESOURCE
         RgwClient._SYSTEM_USERID = Settings.RGW_API_USER_ID
+
+        logger.info("Creating new connection for user: %s",
+                    Settings.RGW_API_USER_ID)
         RgwClient._user_instances[RgwClient._SYSTEM_USERID] = \
             RgwClient(Settings.RGW_API_USER_ID, Settings.RGW_API_ACCESS_KEY,
-                      Settings.RGW_API_SECRET_KEY, host=host, port=port)
+                      Settings.RGW_API_SECRET_KEY)
 
     @staticmethod
     def instance(userid):
@@ -101,10 +102,17 @@ class RgwClient(RestClient):
                  userid,
                  access_key,
                  secret_key,
-                 host='::',
-                 port=8000,
+                 host=None,
+                 port=None,
                  admin_path='admin',
                  ssl=False):
+
+        if not host and not RgwClient._host:
+            RgwClient._load_settings()
+        host = host if host else RgwClient._host
+        port = port if port else RgwClient._port
+        admin_path = admin_path if admin_path else RgwClient._ADMIN_PATH
+        ssl = ssl if ssl else RgwClient._ssl
 
         self.userid = userid
         self.service_url = build_url(host=host, port=port)

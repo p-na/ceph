@@ -1,20 +1,114 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+import re
 from awsauth import S3Auth
-# from oa_settings import Settings
+from ..settings import Settings, Options
 from ..components.rest_client import RestClient, RequestException
-from ..tools import build_url
-from .. import logger
+from ..tools import build_url, isset
+from .. import mgr, logger
 
 
 class RgwClient(RestClient):
+    _SYSTEM_USERID = None
+    _ADMIN_PATH = None
+    _host = None
+    _port = None
+    _ssl = None
+    _user_instances = {}
+
     class NoCredentialsException(Exception):
         def __init__(self):
             super(RgwClient.NoCredentialsException,
                   self).__init__('No RGW credentials found')
 
+    @staticmethod
+    def _determine_rgw_addr():
+        service_map = mgr.get('service_map')
+
+        if not isset(service_map, ['services', 'rgw', 'daemons', 'rgw']):
+            msg = 'No RGW found.'
+            raise LookupError(msg)
+
+        daemon = service_map['services']['rgw']['daemons']['rgw']
+        addr = daemon['addr'].split(':')[0]
+        match = re.search(r'port=(\d+)',
+                          daemon['metadata']['frontend_config#0'])
+        if match:
+            port = int(match.group(1))
+        else:
+            msg = 'Failed to determine RGW port'
+            raise LookupError(msg)
+
+        return addr, port
+
+    @staticmethod
+    def _load_settings():
+        if all((Settings.RGW_API_SCHEME, Settings.RGW_API_ACCESS_KEY, Settings.RGW_API_SECRET_KEY)):
+
+            if Options.has_default_value('RGW_API_HOST') and \
+                    Options.has_default_value('RGW_API_PORT'):
+                host, port = RgwClient._determine_rgw_addr()
+            else:
+                host, port = Settings.RGW_API_HOST, Settings.RGW_API_PORT
+
+            credentials = {
+                'host': host,
+                'port': port,
+                'scheme': Settings.RGW_API_SCHEME,
+                'admin_path': Settings.RGW_API_ADMIN_RESOURCE,
+                'user_id': Settings.RGW_API_USER_ID,
+                'access_key': Settings.RGW_API_ACCESS_KEY,
+                'secret_key': Settings.RGW_API_SECRET_KEY
+            }
+        else:
+            raise RgwClient.NoCredentialsException()
+
+        RgwClient._host = credentials['host']
+        RgwClient._port = credentials['port']
+        RgwClient._ssl = credentials['scheme'] == 'https'
+        logger.info("Creating new connection for user: %s",
+                    credentials['user_id'])
+        RgwClient._ADMIN_PATH = credentials['admin_path']
+        RgwClient._SYSTEM_USERID = credentials['user_id']
+        RgwClient._user_instances[RgwClient._SYSTEM_USERID] = \
+            RgwClient(credentials['user_id'], credentials['access_key'],
+                      credentials['secret_key'], host=host, port=port)
+
+    @staticmethod
+    def instance(userid):
+        if not RgwClient._user_instances:
+            RgwClient._load_settings()
+        if not userid:
+            userid = RgwClient._SYSTEM_USERID
+        if userid not in RgwClient._user_instances:
+            logger.info("Creating new connection for user: %s", userid)
+            keys = RgwClient.admin_instance().get_user_keys(userid)
+            if not keys:
+                raise Exception(
+                    "User '{}' does not have any keys configured.".format(
+                        userid))
+
+            RgwClient._user_instances[userid] = RgwClient(
+                userid, keys['access_key'], keys['secret_key'])
+        return RgwClient._user_instances[userid]
+
+    @staticmethod
+    def admin_instance():
+        return RgwClient.instance(RgwClient._SYSTEM_USERID)
+
+    def _reset_login(self):
+        if self.userid != RgwClient._SYSTEM_USERID:
+            logger.info("Fetching new keys for user: %s", self.userid)
+            keys = RgwClient.admin_instance().get_user_keys(self.userid)
+            self.auth = S3Auth(keys['access_key'], keys['secret_key'],
+                               service_url=self.service_url)
+        else:
+            raise RequestException('Authentication failed for the "{}" user: wrong credentials'
+                                   .format(self.userid), status_code=401)
+
     def __init__(self,
+                 userid,
                  access_key,
                  secret_key,
                  host='::',
@@ -22,6 +116,7 @@ class RgwClient(RestClient):
                  admin_path='admin',
                  ssl=False):
 
+        self.userid = userid
         self.service_url = build_url(host=host, port=port)
         self.admin_path = admin_path
 
@@ -34,6 +129,14 @@ class RgwClient(RestClient):
     def is_service_online(self, request=None):
         response = request({'format': 'json'})
         return response[0]['ID'] == 'online'
+
+    @RestClient.api_get('/{admin_path}/metadata/user', resp_structure='[+]')
+    def _is_system_user(self, admin_path, request=None):
+        response = request()
+        return self.userid in response
+
+    def is_system_user(self):
+        return self._is_system_user(self.admin_path)
 
     @RestClient.api_get(
         '/{admin_path}/user',

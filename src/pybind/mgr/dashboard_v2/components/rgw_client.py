@@ -44,36 +44,26 @@ class RgwClient(RestClient):
 
     @staticmethod
     def _load_settings():
-        if all((Settings.RGW_API_SCHEME, Settings.RGW_API_ACCESS_KEY, Settings.RGW_API_SECRET_KEY)):
-
+        if Settings.RGW_API_SCHEME and Settings.RGW_API_ACCESS_KEY and \
+                Settings.RGW_API_SECRET_KEY:
             if Options.has_default_value('RGW_API_HOST') and \
                     Options.has_default_value('RGW_API_PORT'):
                 host, port = RgwClient._determine_rgw_addr()
             else:
                 host, port = Settings.RGW_API_HOST, Settings.RGW_API_PORT
-
-            credentials = {
-                'host': host,
-                'port': port,
-                'scheme': Settings.RGW_API_SCHEME,
-                'admin_path': Settings.RGW_API_ADMIN_RESOURCE,
-                'user_id': Settings.RGW_API_USER_ID,
-                'access_key': Settings.RGW_API_ACCESS_KEY,
-                'secret_key': Settings.RGW_API_SECRET_KEY
-            }
         else:
             raise RgwClient.NoCredentialsException()
 
-        RgwClient._host = credentials['host']
-        RgwClient._port = credentials['port']
-        RgwClient._ssl = credentials['scheme'] == 'https'
+        RgwClient._host = host
+        RgwClient._port = port
+        RgwClient._ssl = Settings.RGW_API_SCHEME == 'https'
         logger.info("Creating new connection for user: %s",
-                    credentials['user_id'])
-        RgwClient._ADMIN_PATH = credentials['admin_path']
-        RgwClient._SYSTEM_USERID = credentials['user_id']
+                    Settings.RGW_API_USER_ID)
+        RgwClient._ADMIN_PATH = Settings.RGW_API_ADMIN_RESOURCE
+        RgwClient._SYSTEM_USERID = Settings.RGW_API_USER_ID
         RgwClient._user_instances[RgwClient._SYSTEM_USERID] = \
-            RgwClient(credentials['user_id'], credentials['access_key'],
-                      credentials['secret_key'], host=host, port=port)
+            RgwClient(Settings.RGW_API_USER_ID, Settings.RGW_API_ACCESS_KEY,
+                      Settings.RGW_API_SECRET_KEY, host=host, port=port)
 
     @staticmethod
     def instance(userid):

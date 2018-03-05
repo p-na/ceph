@@ -88,27 +88,3 @@ class RgwProxy(RESTController):
             data = cherrypy.request.body.read()
 
         return rgw_client.proxy(method, path, params, data)
-
-    @staticmethod
-    def _determine_rgw_addr():
-        service_map = mgr.get('service_map')
-
-        if not isset(service_map, ['services', 'rgw', 'daemons', 'rgw']):
-            msg = 'No RGW found.'
-            raise LookupError(msg)
-
-        daemon = service_map['services']['rgw']['daemons']['rgw']
-        if daemon['metadata']['zonegroup_name'] != 'default' or \
-                daemon['metadata']['zone_name'] != 'default':
-            msg = 'Automatically determining RGW daemon failed.'
-            raise LookupError(msg)
-
-        addr = daemon['addr'].split(':')[0]
-        match = re.search(r'port=(\d+)', daemon['metadata']['frontend_config#0'])
-        if match:
-            port = int(match.group(1))
-        else:
-            msg = 'Failed to determine RGW port'
-            raise LookupError(msg)
-
-        return addr, port

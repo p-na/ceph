@@ -13,6 +13,14 @@ class Options(object):
     If you need to store some configuration value please add the config option
     name as a class attribute to this class.
     """
+
+    # Grafana settings
+    GRAFANA_API_HOST = ('localhost', str)
+    GRAFANA_API_PORT = (3000, int)
+    GRAFANA_API_USERNAME = ('admin', str)
+    GRAFANA_API_PASSWORD = ('admin', str)
+    GRAFANA_API_SCHEME = ('http', str)
+
     # RGW settings
     RGW_API_HOST = ('', str)
     RGW_API_PORT = (80, int)

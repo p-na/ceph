@@ -13,7 +13,6 @@ import pkgutil
 import sys
 import time
 import threading
-from errno import errorcode
 try:
     from urlparse import ParseResult
 except ImportError:

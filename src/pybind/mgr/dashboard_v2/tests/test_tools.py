@@ -149,3 +149,5 @@ class TestFunctions(unittest.TestCase):
         self.assertTrue(isset(x, ['a', 'b', 'c']))
         self.assertTrue(isset(x, ['a']))
         self.assertFalse(isset(x, ['a', 'c']))
+
+        self.assertTrue(isset(x, []))

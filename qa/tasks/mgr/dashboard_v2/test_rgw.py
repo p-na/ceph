@@ -5,7 +5,6 @@ from .helper import DashboardTestCase, authenticate
 
 
 class RgwControllerTest(DashboardTestCase):
-
     @authenticate
     def test_rgw_daemon_list(self):
         data = self._get('/api/rgw/daemon')
@@ -28,3 +27,11 @@ class RgwControllerTest(DashboardTestCase):
         self.assertIn('rgw_id', data)
         self.assertIn('rgw_status', data)
         self.assertTrue(data['rgw_metadata'])
+
+
+class RgwProxyTest(DashboardTestCase):
+
+    @authenticate
+    def test_rgw_proxy(self):
+        self._get('/api/rgw/proxy/usage')
+        self.assertJsonBody({"entries": [], "summary": []})

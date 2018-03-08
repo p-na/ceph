@@ -32,6 +32,17 @@ class RgwControllerTest(DashboardTestCase):
 class RgwProxyTest(DashboardTestCase):
 
     @authenticate
-    def test_rgw_proxy(self):
+    def test_rgw_proxy_get(self):
         self._get('/api/rgw/proxy/usage')
         self.assertJsonBody({"entries": [], "summary": []})
+
+    @authenticate
+    def test_rgw_proxy_put(self):
+        resp = self._put('/api/rgw/proxy/user/', {
+            'uid': 'rgw-test-user',
+            'display-name': 'rgw-test-user displayname',
+            'access-key': 'foo',
+            'secret-key': 'bar',
+        })
+        pass
+        self.assertTrue(False)

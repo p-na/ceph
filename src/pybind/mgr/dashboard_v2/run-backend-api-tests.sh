@@ -90,7 +90,11 @@ TEST_CASES=`for i in \`ls $BUILD_DIR/../qa/tasks/mgr/dashboard_v2/test_*\`; do F
 export PATH=$BUILD_DIR/bin:$PATH
 export LD_LIBRARY_PATH=$BUILD_DIR/lib/cython_modules/lib.${CEPH_PY_VERSION_MAJOR}/:$BUILD_DIR/lib
 export PYTHONPATH=$TEMP_DIR/teuthology:$BUILD_DIR/../qa:$BUILD_DIR/lib/cython_modules/lib.${CEPH_PY_VERSION_MAJOR}/
-eval python ../qa/tasks/vstart_runner.py tasks.mgr.test_dashboard_v2 $TEST_CASES
+if [ -z "$1" ]; then
+    eval python ../qa/tasks/vstart_runner.py tasks.mgr.test_dashboard_v2 $TEST_CASES
+else
+    eval python ../qa/tasks/vstart_runner.py $1
+fi
 
 deactivate
 killall ceph-mgr

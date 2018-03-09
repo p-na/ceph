@@ -85,23 +85,28 @@ sleep 10
 source $TEMP_DIR/venv/bin/activate
 BUILD_DIR=`pwd`
 
-TEST_CASES=`for i in \`ls $BUILD_DIR/../qa/tasks/mgr/dashboard_v2/test_*\`; do F=$(basename $i); M="${F%.*}"; echo -n " tasks.mgr.dashboard_v2.$M"; done`
+clean_up_env() {
+    deactivate
+    killall ceph-mgr
+    sleep 10
+    ../src/stop.sh
+    sleep 5
+
+    cd $CURR_DIR
+    rm -rf $TEMP_DIR
+}
 
 export PATH=$BUILD_DIR/bin:$PATH
 export LD_LIBRARY_PATH=$BUILD_DIR/lib/cython_modules/lib.${CEPH_PY_VERSION_MAJOR}/:$BUILD_DIR/lib
 export PYTHONPATH=$TEMP_DIR/teuthology:$BUILD_DIR/../qa:$BUILD_DIR/lib/cython_modules/lib.${CEPH_PY_VERSION_MAJOR}/
-if [ -z "$1" ]; then
-    eval python ../qa/tasks/vstart_runner.py tasks.mgr.test_dashboard_v2 $TEST_CASES
+
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]] ; then
+    echo -e "Environment ready, use\n\tpython ../qa/tasks/vstart_runner.py <test_name>\nto run tests"
+    echo "\te.g. tasks.mgr.dashboard_v2.test_rgw"
+    echo "Run \"exit_test\" when you're done. But not that you may need to restart the shell either way."
 else
-    eval python ../qa/tasks/vstart_runner.py $1
+    TEST_CASES=`for i in \`ls $BUILD_DIR/../qa/tasks/mgr/dashboard_v2/test_*\`; do F=$(basename $i); M="${F%.*}"; echo -n " tasks.mgr.dashboard_v2.$M"; done`
+    eval python ../qa/tasks/vstart_runner.py tasks.mgr.test_dashboard_v2 $TEST_CASES
+
+    clean_up_env
 fi
-
-deactivate
-killall ceph-mgr
-sleep 10
-../src/stop.sh
-sleep 5
-
-cd $CURR_DIR
-rm -rf $TEMP_DIR
-

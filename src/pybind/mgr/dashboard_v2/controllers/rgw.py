@@ -83,7 +83,8 @@ class RgwProxy(RESTController):
         method = cherrypy.request.method
         path = '/'.join(vpath)
         data = None
-        if cherrypy.request.body.length is not None:
+
+        if cherrypy.request.body.length:
             data = cherrypy.request.body.read()
 
         return rgw_client.proxy(method, path, params, data)

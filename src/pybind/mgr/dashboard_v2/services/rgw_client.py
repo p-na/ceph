@@ -98,7 +98,7 @@ class RgwClient(RestClient):
             raise RequestException('Authentication failed for the "{}" user: wrong credentials'
                                    .format(self.userid), status_code=401)
 
-    def __init__(self,
+    def __init__(self,  # pylint: disable-msg=R0913
                  userid,
                  access_key,
                  secret_key,
@@ -130,6 +130,7 @@ class RgwClient(RestClient):
 
     @RestClient.api_get('/{admin_path}/metadata/user', resp_structure='[+]')
     def _is_system_user(self, admin_path, request=None):
+        # pylint: disable=unused-argument
         response = request()
         return self.userid in response
 
@@ -141,6 +142,7 @@ class RgwClient(RestClient):
         resp_structure='tenant & user_id & email & keys[*] > '
         ' (user & access_key & secret_key)')
     def _admin_get_user_keys(self, admin_path, userid, request=None):
+        # pylint: disable=unused-argument
         colon_idx = userid.find(':')
         user = userid if colon_idx == -1 else userid[:colon_idx]
         response = request({'uid': user})
@@ -150,18 +152,20 @@ class RgwClient(RestClient):
                     'access_key': keys['access_key'],
                     'secret_key': keys['secret_key']
                 }
+        return None
 
     def get_user_keys(self, userid):
         return self._admin_get_user_keys(self.admin_path, userid)
 
     @RestClient.api('/{admin_path}/{path}')
-    def _proxy_request(self,
+    def _proxy_request(self,  # pylint: disable=too-many-arguments
                        admin_path,
                        path,
                        method,
                        params,
                        data,
                        request=None):
+        # pylint: disable=unused-argument
         return request(
             method=method, params=params, data=data, raw_content=True)
 
@@ -186,6 +190,7 @@ class RgwClient(RestClient):
         :param bucket_name: The name of the bucket.
         :return: Returns True if the bucket exists, otherwise False.
         """
+        # pylint: disable=unused-argument
         try:
             request()
             my_buckets = self.get_buckets()

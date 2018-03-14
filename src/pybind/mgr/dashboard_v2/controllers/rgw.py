@@ -9,6 +9,7 @@ from .. import logger
 from ..services.ceph_service import CephService
 from ..tools import ApiController, RESTController, AuthRequired
 from ..components.rgw_client import RgwClient
+from ..components.rest_client import RequestException
 
 
 @ApiController('rgw')
@@ -87,4 +88,8 @@ class RgwProxy(RESTController):
         if cherrypy.request.body.length:
             data = cherrypy.request.body.read()
 
-        return rgw_client.proxy(method, path, params, data)
+        try:
+            return rgw_client.proxy(method, path, params, data)
+        except RequestException as e:
+            cherrypy.response.status = e.status_code
+            return e.content

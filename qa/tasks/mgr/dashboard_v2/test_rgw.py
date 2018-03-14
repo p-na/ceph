@@ -3,7 +3,8 @@ from __future__ import absolute_import
 import urllib
 
 from .helper import DashboardTestCase, authenticate
-from pprint import pformat
+import logging
+log = logging.getLogger(__name__)
 
 
 class RgwControllerTest(DashboardTestCase):
@@ -95,6 +96,11 @@ class RgwProxyTest(DashboardTestCase):
                 'uid': 'teuth-test-user'
             })))
         self.assertStatus(404)
+        resp = self._resp.json()
+        self.assertIn('Code', resp)
+        self.assertIn('HostId', resp)
+        self.assertIn('RequestId', resp)
+        self.assertEqual(resp['Code'], 'NoSuchUser')
 
     @authenticate
     def test_rgw_proxy(self):

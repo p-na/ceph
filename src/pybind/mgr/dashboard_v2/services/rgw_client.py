@@ -4,8 +4,8 @@ from __future__ import absolute_import
 import re
 from awsauth import S3Auth
 from ..settings import Settings, Options
-from ..components.rest_client import RestClient, RequestException
-from ..tools import build_url, isset
+from ..rest_client import RestClient, RequestException
+from ..tools import build_url, dict_contains_path
 from .. import mgr, logger
 
 
@@ -26,7 +26,7 @@ class RgwClient(RestClient):
     def _determine_rgw_addr():
         service_map = mgr.get('service_map')
 
-        if not isset(service_map, ['services', 'rgw', 'daemons', 'rgw']):
+        if not dict_contains_path(service_map, ['services', 'rgw', 'daemons', 'rgw']):
             msg = 'No RGW found.'
             raise LookupError(msg)
 

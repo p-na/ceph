@@ -9,7 +9,7 @@ from cherrypy.lib.sessions import RamSession
 from cherrypy.test import helper
 from mock import patch
 
-from ..tools import RESTController, detail_route, is_valid_ipv6_address, isset
+from ..tools import RESTController, detail_route, is_valid_ipv6_address, dict_contains_path
 
 
 # pylint: disable=W0613
@@ -144,10 +144,10 @@ class TestFunctions(unittest.TestCase):
         self.assertTrue(is_valid_ipv6_address('1200:0000:AB00:1234:0000:2552:7777:1313'))
         self.assertFalse(is_valid_ipv6_address('1200::AB00:1234::2552:7777:1313'))
 
-    def test_isset(self):
+    def test_dict_contains_path(self):
         x = {'a': {'b': {'c': 'foo'}}}
-        self.assertTrue(isset(x, ['a', 'b', 'c']))
-        self.assertTrue(isset(x, ['a']))
-        self.assertFalse(isset(x, ['a', 'c']))
+        self.assertTrue(dict_contains_path(x, ['a', 'b', 'c']))
+        self.assertTrue(dict_contains_path(x, ['a']))
+        self.assertFalse(dict_contains_path(x, ['a', 'c']))
 
-        self.assertTrue(isset(x, []))
+        self.assertTrue(dict_contains_path(x, []))

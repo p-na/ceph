@@ -8,8 +8,8 @@ import cherrypy
 from .. import logger
 from ..services.ceph_service import CephService
 from ..tools import ApiController, RESTController, AuthRequired
-from ..components.rgw_client import RgwClient
-from ..components.rest_client import RequestException
+from ..services.rgw_client import RgwClient
+from ..rest_client import RequestException
 
 
 @ApiController('rgw')

@@ -530,7 +530,7 @@ def build_url(host, scheme=None, port=None):
     return pr.geturl()
 
 
-def isset(dct, keys):
+def dict_contains_path(dct, keys):
     """
     Tests wheter the keys exist recursively in `dictionary`.
 
@@ -542,6 +542,6 @@ def isset(dct, keys):
         key = keys.pop(0)
         if key in dct:
             dct = dct[key]
-            return isset(dct, keys)
+            return dict_contains_path(dct, keys)
         return False
     return True

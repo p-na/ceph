@@ -13,13 +13,13 @@
 """
 from __future__ import absolute_import
 
-from ..tools import build_url
+from .tools import build_url
 import inspect
 import itertools
 import re
 import requests
 from requests.exceptions import ConnectionError, InvalidURL
-from .. import logger
+from . import logger
 
 try:
     from requests.packages.urllib3.exceptions import SSLError

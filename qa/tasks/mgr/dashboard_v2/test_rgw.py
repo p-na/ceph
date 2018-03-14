@@ -3,10 +3,7 @@ from __future__ import absolute_import
 import urllib
 
 from .helper import DashboardTestCase, authenticate
-import logging
 from pprint import pformat
-
-log = logging.getLogger(__name__)
 
 
 class RgwControllerTest(DashboardTestCase):
@@ -35,7 +32,6 @@ class RgwControllerTest(DashboardTestCase):
 
 
 class RgwProxyTest(DashboardTestCase):
-
     def _assert_user_data(self, data):
         self.assertIn('caps', data)
         self.assertIn('display_name', data)
@@ -49,11 +45,7 @@ class RgwProxyTest(DashboardTestCase):
         self.assertIn('tenant', data)
         self.assertIn('user_id', data)
 
-    @authenticate
-    def test_rgw_proxy(self):
-        self.maxDiff = None
-
-        # Create a user
+    def _test_put(self):
         args = {
             'uid': 'teuth-test-user',
             'display-name': 'display name',
@@ -61,30 +53,62 @@ class RgwProxyTest(DashboardTestCase):
         url = '/api/rgw/proxy/user?{}'.format(urllib.urlencode(args))
         self._put(url)
         data = self._resp.json()
+
         self._assert_user_data(data)
         self.assertStatus(200)
 
-        # Get the user details
         args = {'uid': 'teuth-test-user'}
         url = '/api/rgw/proxy/user?{}'.format(urllib.urlencode(args))
         data = self._get(url)
+
+        self.assertStatus(200)
+        self.assertEqual(data['user_id'], 'teuth-test-user')
+
+    def _test_get(self):
+        args = {'uid': 'teuth-test-user'}
+        url = '/api/rgw/proxy/user?{}'.format(urllib.urlencode(args))
+        data = self._get(url)
+
         self._assert_user_data(data)
         self.assertStatus(200)
         self.assertEquals(data['user_id'], 'teuth-test-user')
 
-        # Update the user details
-        args = {'uid': 'teuth-test-user', 'display-name': 'new name',}
+    def _test_post(self):
+        """Updates the user"""
+        args = {'uid': 'teuth-test-user', 'display-name': 'new name'}
         url = '/api/rgw/proxy/user?{}'.format(urllib.urlencode(args))
         self._post(url)
-        data = self._resp.json()
-        log.error(pformat(data))
-        self.assertStatus(200)
-        self._assert_user_data(data)
-        self.assertEqual(data['display_name'], 'new name')
 
-        # Delete the user
-        args = {'uid': 'teuth-test-user'}
-        url = '/api/rgw/proxy/user?{}'.format(urllib.urlencode(args))
-        self._delete(url)
+        self.assertStatus(200)
+        self._assert_user_data(self._resp.json())
+        self.assertEqual(self._resp.json()['display_name'], 'new name')
+
+    def _test_delete(self):
+        self._delete('/api/rgw/proxy/user?{}'.format(
+            urllib.urlencode({
+                'uid': 'teuth-test-user'
+            })))
         self.assertStatus(200)
 
+        self._delete('/api/rgw/proxy/user?{}'.format(
+            urllib.urlencode({
+                'uid': 'teuth-test-user'
+            })))
+        self.assertStatus(404)
+
+    @authenticate
+    def test_rgw_proxy(self):
+        """Test basic request types"""
+        self.maxDiff = None
+
+        # PUT - Create a user
+        self._test_put()
+
+        # GET - Get the user details
+        self._test_get()
+
+        # POST - Update the user details
+        self._test_post()
+
+        # DELETE - Delete the user
+        self._test_delete()

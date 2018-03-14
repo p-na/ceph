@@ -13,10 +13,8 @@ import pkgutil
 import sys
 import time
 import threading
-try:
-    from urlparse import ParseResult
-except ImportError:
-    from urllib.parse import ParseResult
+
+from six.moves.urllib.parse import ParseResult
 
 import cherrypy
 
@@ -41,6 +39,7 @@ def ApiController(path):
                 config['tools.authenticate.on'] = False
         cls._cp_config.update(config)
         return cls
+
     return decorate
 
 
@@ -48,13 +47,12 @@ def AuthRequired(enabled=True):
     def decorate(cls):
         if not hasattr(cls, '_cp_config'):
             cls._cp_config = dict(cls._cp_config_default)
-            cls._cp_config = {
-                'tools.authenticate.on': enabled
-            }
+            cls._cp_config = {'tools.authenticate.on': enabled}
         else:
             cls._cp_config.update(cls._cp_config_default)
             cls._cp_config['tools.authenticate.on'] = enabled
         return cls
+
     return decorate
 
 
@@ -69,8 +67,8 @@ def load_controllers():
     ctrls_path = '{}/controllers'.format(dashboard_dir)
     mods = [mod for _, mod, _ in pkgutil.iter_modules([ctrls_path])]
     for mod_name in mods:
-        mod = importlib.import_module('.controllers.{}'.format(mod_name),
-                                      package='dashboard_v2')
+        mod = importlib.import_module(
+            '.controllers.{}'.format(mod_name), package='dashboard_v2')
         for _, cls in mod.__dict__.items():
             # Controllers MUST be derived from the class BaseController.
             if inspect.isclass(cls) and issubclass(cls, BaseController) and \
@@ -82,8 +80,12 @@ def load_controllers():
 
 def json_error_page(status, message, traceback, version):
     cherrypy.response.headers['Content-Type'] = 'application/json'
-    return json.dumps(dict(status=status, detail=message, traceback=traceback,
-                           version=version))
+    return json.dumps(
+        dict(
+            status=status,
+            detail=message,
+            traceback=traceback,
+            version=version))
 
 
 class BaseController(object):
@@ -91,7 +93,9 @@ class BaseController(object):
     Base class for all controllers providing API endpoints.
     """
     _cp_config_default = {
-        'request.error_page': {'default': json_error_page},
+        'request.error_page': {
+            'default': json_error_page
+        },
     }
 
 
@@ -170,8 +174,8 @@ class ViewCache(object):
                     return ViewCache.VALUE_OK, self.value
 
                 if self.getter_thread is None:
-                    self.getter_thread = ViewCache.GetterThread(self, fn, args,
-                                                                kwargs)
+                    self.getter_thread = ViewCache.GetterThread(
+                        self, fn, args, kwargs)
                     self.getter_thread.start()
 
                 ev = self.getter_thread.event
@@ -202,6 +206,7 @@ class ViewCache(object):
                 rvc = ViewCache.RemoteViewCache(self.timeout)
                 self.cache_by_args[args] = rvc
             return rvc.run(fn, args, kwargs)
+
         return wrapper
 
 
@@ -232,14 +237,16 @@ class RESTController(BaseController):
     def _not_implemented(self, obj_key, detail_route_name):
         if detail_route_name:
             try:
-                methods = getattr(getattr(self, detail_route_name), 'detail_route_methods')
+                methods = getattr(
+                    getattr(self, detail_route_name), 'detail_route_methods')
             except AttributeError:
                 raise cherrypy.NotFound()
         else:
-            methods = [method
-                       for ((method, _is_element), (meth, _))
-                       in self._method_mapping.items()
-                       if _is_element == obj_key is not None and hasattr(self, meth)]
+            methods = [
+                method for ((method, _is_element),
+                            (meth, _)) in self._method_mapping.items()
+                if _is_element == obj_key is not None and hasattr(self, meth)
+            ]
         cherrypy.response.headers['Allow'] = ','.join(methods)
         raise cherrypy.HTTPError(405, 'Method not implemented.')
 
@@ -261,14 +268,15 @@ class RESTController(BaseController):
                 method = getattr(self, detail_route_name)
                 if not getattr(method, 'detail_route'):
                     self._not_implemented(obj_key, detail_route_name)
-                if cherrypy.request.method not in getattr(method, 'detail_route_methods'):
+                if cherrypy.request.method not in getattr(
+                        method, 'detail_route_methods'):
                     self._not_implemented(obj_key, detail_route_name)
                 return method, 200
             except AttributeError:
                 self._not_implemented(obj_key, detail_route_name)
         else:
-            method_name, status_code = self._method_mapping[
-                (cherrypy.request.method, obj_key is not None)]
+            method_name, status_code = self._method_mapping[(
+                cherrypy.request.method, obj_key is not None)]
             method = getattr(self, method_name, None)
             if not method:
                 self._not_implemented(obj_key, detail_route_name)
@@ -276,8 +284,7 @@ class RESTController(BaseController):
 
     @cherrypy.expose
     def default(self, *vpath, **params):
-        cherrypy.config.update({
-            'error_page.default': json_error_page})
+        cherrypy.config.update({'error_page.default': json_error_page})
         obj_key, detail_route_name = self.split_vpath(vpath)
         method, status_code = self._get_method(obj_key, detail_route_name)
 
@@ -327,6 +334,7 @@ class RESTController(BaseController):
                 return func(*n_args, **kwargs)
 
             return func(data, *args, **kwargs)
+
         return inner
 
     @staticmethod
@@ -335,6 +343,7 @@ class RESTController(BaseController):
             cherrypy.response.headers['Content-Type'] = 'application/json'
             ret = func(*args, **kwargs)
             return json.dumps(ret).encode('utf8')
+
         return inner
 
     @staticmethod
@@ -351,6 +360,7 @@ def detail_route(methods):
         func.detail_route = True
         func.detail_route_methods = [m.upper() for m in methods]
         return func
+
     return decorator
 
 
@@ -375,6 +385,7 @@ class SessionExpireAtBrowserCloseTool(cherrypy.Tool):
     at browser close if the 'Keep me logged in' checkbox was selected
     on the login page.
     """
+
     def __init__(self):
         cherrypy.Tool.__init__(self, 'before_finalize', self._callback)
 
@@ -386,11 +397,12 @@ class SessionExpireAtBrowserCloseTool(cherrypy.Tool):
         if expire_at_browser_close:
             # Get the cookie and its name.
             cookie = cherrypy.response.cookie
-            name = cherrypy.request.config.get(
-                'tools.sessions.name', Session.NAME)
+            name = cherrypy.request.config.get('tools.sessions.name',
+                                               Session.NAME)
             # Make the cookie a session cookie by purging the
             # fields 'expires' and 'max-age'.
-            logger.debug("expire at browser close: removing 'expires' and 'max-age'")
+            logger.debug(
+                "expire at browser close: removing 'expires' and 'max-age'")
             if name in cookie:
                 del cookie[name]['expires']
                 del cookie[name]['max-age']
@@ -526,7 +538,13 @@ def build_url(host, scheme=None, port=None):
     netloc = host if not is_valid_ipv6_address(host) else '[{}]'.format(host)
     if port:
         netloc += ':{}'.format(port)
-    pr = ParseResult(scheme=scheme, netloc=netloc, path='', params='', query='', fragment='')
+    pr = ParseResult(
+        scheme=scheme if scheme else '',
+        netloc=netloc,
+        path='',
+        params='',
+        query='',
+        fragment='')
     return pr.geturl()
 
 

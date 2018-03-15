@@ -14,7 +14,7 @@ import sys
 import time
 import threading
 
-from six.moves.urllib.parse import ParseResult
+from six.moves import urllib
 
 import cherrypy
 
@@ -538,7 +538,7 @@ def build_url(host, scheme=None, port=None):
     netloc = host if not is_valid_ipv6_address(host) else '[{}]'.format(host)
     if port:
         netloc += ':{}'.format(port)
-    pr = ParseResult(
+    pr = urllib.parse.ParseResult(
         scheme=scheme if scheme else '',
         netloc=netloc,
         path='',

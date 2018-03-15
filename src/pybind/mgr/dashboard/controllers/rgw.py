@@ -3,9 +3,13 @@ from __future__ import absolute_import
 
 import json
 
+import cherrypy
+
 from .. import logger
 from ..services.ceph_service import CephService
 from ..tools import ApiController, RESTController, AuthRequired
+from ..services.rgw_client import RgwClient
+from ..rest_client import RequestException
 
 
 @ApiController('rgw')
@@ -67,4 +71,25 @@ class RgwDaemon(RESTController):
 
         daemon['rgw_metadata'] = metadata
         daemon['rgw_status'] = status
+
         return daemon
+
+
+@ApiController('rgw/proxy')
+@AuthRequired()
+class RgwProxy(RESTController):
+    @cherrypy.expose
+    def default(self, *vpath, **params):
+        rgw_client = RgwClient.admin_instance()
+        method = cherrypy.request.method
+        path = '/'.join(vpath)
+        data = None
+
+        if cherrypy.request.body.length:
+            data = cherrypy.request.body.read()
+
+        try:
+            return rgw_client.proxy(method, path, params, data)
+        except RequestException as e:
+            cherrypy.response.status = e.status_code
+            return e.content

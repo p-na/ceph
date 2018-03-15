@@ -77,6 +77,11 @@ export COVERAGE_FILE=.coverage.mgr.dashboard
 MGR=2 RGW=1 ../src/vstart.sh -n -d
 sleep 10
 
+# Create an admin user and set the credentials so that the dashboard can use them
+./bin/radosgw-admin user create --uid=admin --display-name=admin --system --access-key=admin --secret=admin
+./bin/ceph dashboard set-rgw-api-secret-key admin
+./bin/ceph dashboard set-rgw-api-access-key admin
+
 source $TEMP_DIR/venv/bin/activate
 BUILD_DIR=`pwd`
 

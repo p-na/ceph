@@ -147,6 +147,7 @@ class TestFunctions(unittest.TestCase):
     def test_dict_contains_path(self):
         x = {'a': {'b': {'c': 'foo'}}}
         self.assertTrue(dict_contains_path(x, ['a', 'b', 'c']))
+        self.assertTrue(dict_contains_path(x, ['a', 'b', 'c']))
         self.assertTrue(dict_contains_path(x, ['a']))
         self.assertFalse(dict_contains_path(x, ['a', 'c']))
 

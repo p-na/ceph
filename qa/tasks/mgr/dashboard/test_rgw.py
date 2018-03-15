@@ -3,8 +3,6 @@ from __future__ import absolute_import
 import urllib
 
 from .helper import DashboardTestCase, authenticate
-import logging
-log = logging.getLogger(__name__)
 
 
 class RgwControllerTest(DashboardTestCase):

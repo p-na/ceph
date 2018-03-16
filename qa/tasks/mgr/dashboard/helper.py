@@ -73,31 +73,32 @@ class DashboardTestCase(MgrTestCase):
         self._session = requests.Session()
         self._resp = None
 
-    def _request(self, url, method, data=None):
+    def _request(self, url, method, data=None, params=None):
         url = "{}{}".format(self.base_uri, url)
+
         log.info("request %s to %s", method, url)
         if method == 'GET':
-            self._resp = self._session.get(url)
+            self._resp = self._session.get(url, params=params)
             return self._resp.json()
         elif method == 'POST':
-            self._resp = self._session.post(url, json=data)
+            self._resp = self._session.post(url, json=data, params=params)
         elif method == 'DELETE':
-            self._resp = self._session.delete(url, json=data)
+            self._resp = self._session.delete(url, json=data, params=params)
         elif method == 'PUT':
-            self._resp = self._session.put(url, json=data)
+            self._resp = self._session.put(url, json=data, params=params)
         return None
 
-    def _get(self, url):
-        return self._request(url, 'GET')
+    def _get(self, url, params=None):
+        return self._request(url, 'GET', params=params)
 
-    def _post(self, url, data=None):
-        self._request(url, 'POST', data)
+    def _post(self, url, data=None, params=None):
+        self._request(url, 'POST', data, params=params)
 
-    def _delete(self, url, data=None):
-        self._request(url, 'DELETE', data)
+    def _delete(self, url, data=None, params=None):
+        self._request(url, 'DELETE', data, params=params)
 
-    def _put(self, url, data=None):
-        self._request(url, 'PUT', data)
+    def _put(self, url, data=None, params=None):
+        self._request(url, 'PUT', data, params=params)
 
     def cookies(self):
         return self._resp.cookies

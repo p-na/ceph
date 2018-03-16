@@ -45,28 +45,26 @@ class RgwProxyTest(DashboardTestCase):
         self.assertIn('user_id', data)
 
     def _test_put(self):
-        args = {
-            'uid': 'teuth-test-user',
-            'display-name': 'display name',
-        }
-        url = '/api/rgw/proxy/user?{}'.format(urllib.urlencode(args))
-        self._put(url)
+        self._put(
+            '/api/rgw/proxy/user',
+            params={
+                'uid': 'teuth-test-user',
+                'display-name': 'display name',
+            })
         data = self._resp.json()
 
         self._assert_user_data(data)
         self.assertStatus(200)
 
-        args = {'uid': 'teuth-test-user'}
-        url = '/api/rgw/proxy/user?{}'.format(urllib.urlencode(args))
-        data = self._get(url)
+        data = self._get(
+            '/api/rgw/proxy/user', params={'uid': 'teuth-test-user'})
 
         self.assertStatus(200)
         self.assertEqual(data['user_id'], 'teuth-test-user')
 
     def _test_get(self):
-        args = {'uid': 'teuth-test-user'}
-        url = '/api/rgw/proxy/user?{}'.format(urllib.urlencode(args))
-        data = self._get(url)
+        data = self._get(
+            '/api/rgw/proxy/user', params={'uid': 'teuth-test-user'})
 
         self._assert_user_data(data)
         self.assertStatus(200)
@@ -74,25 +72,22 @@ class RgwProxyTest(DashboardTestCase):
 
     def _test_post(self):
         """Updates the user"""
-        args = {'uid': 'teuth-test-user', 'display-name': 'new name'}
-        url = '/api/rgw/proxy/user?{}'.format(urllib.urlencode(args))
-        self._post(url)
+        self._post(
+            '/api/rgw/proxy/user',
+            params={
+                'uid': 'teuth-test-user',
+                'display-name': 'new name'
+            })
 
         self.assertStatus(200)
         self._assert_user_data(self._resp.json())
         self.assertEqual(self._resp.json()['display_name'], 'new name')
 
     def _test_delete(self):
-        self._delete('/api/rgw/proxy/user?{}'.format(
-            urllib.urlencode({
-                'uid': 'teuth-test-user'
-            })))
+        self._delete('/api/rgw/proxy/user', params={'uid': 'teuth-test-user'})
         self.assertStatus(200)
 
-        self._delete('/api/rgw/proxy/user?{}'.format(
-            urllib.urlencode({
-                'uid': 'teuth-test-user'
-            })))
+        self._delete('/api/rgw/proxy/user', params={'uid': 'teuth-test-user'})
         self.assertStatus(404)
         resp = self._resp.json()
         self.assertIn('Code', resp)

@@ -5,7 +5,7 @@ import cherrypy
 import requests
 from six.moves.urllib.parse import urlparse  # pylint: disable=import-error
 
-from . import ApiController, BaseController, AuthRequired
+from . import ApiController, BaseController, AuthRequired, no_browsable_api
 from .. import logger
 from ..settings import Settings
 
@@ -103,6 +103,7 @@ class Grafana(BaseController):
 @ApiController('grafana/proxy/{path:.*}')
 @AuthRequired()
 class GrafanaProxy(BaseController):
+    @no_browsable_api
     @cherrypy.expose
     def __call__(self, path, **params):
         grafana = GrafanaRestClient.instance()

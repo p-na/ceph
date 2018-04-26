@@ -192,6 +192,10 @@ Grafana on your preferred hosts, proceed with the following steps::
 
     $ ceph mgr module enable prometheus
 
+    More details can be found on the `documentation
+    <http://docs.ceph.com/docs/master/mgr/prometheus/>`_ of the prometheus
+    module.
+
  2. Add the corresponding scrape configuration to Prometheus. This may look
     like::
 

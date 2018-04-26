@@ -56,6 +56,11 @@ def AuthRequired(enabled=True):
     return decorate
 
 
+def no_browsable_api(meth):
+    meth.no_browsable_api = True
+    return meth
+
+
 def load_controllers():
     # setting sys.path properly when not running under the mgr
     controllers_dir = os.path.dirname(os.path.realpath(__file__))
@@ -373,7 +378,8 @@ class BaseControllerMeta(type):
             if isinstance(thing, (types.FunctionType, types.MethodType))\
                     and getattr(thing, 'exposed', False):
 
-                setattr(new_cls, a_name, browsable_api_view(thing))
+                if not getattr(thing, 'no_browsable_api', False):
+                    setattr(new_cls, a_name, browsable_api_view(thing))
         return new_cls
 
 

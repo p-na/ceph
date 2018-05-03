@@ -9,7 +9,7 @@ from mock import patch
 
 from ..services.exception import handle_rados_error
 from .helper import ControllerTestCase
-from ..controllers import RESTController, ApiController, BaseController
+from ..controllers import RESTController, ApiController, BaseController, no_browsable_api
 from ..tools import is_valid_ipv6_address, dict_contains_path
 
 
@@ -46,6 +46,7 @@ class FooResourceDetail(RESTController):
 
 @ApiController('rgw/proxy/{path:.*}')
 class GenerateControllerRoutesController(BaseController):
+    @no_browsable_api
     @cherrypy.expose
     def __call__(self, path, **params):
         pass

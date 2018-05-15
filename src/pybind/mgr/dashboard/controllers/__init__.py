@@ -65,6 +65,10 @@ class ApiController(Controller):
 
 
 def AuthRequired(enabled=True):
+    if not isinstance(enabled, bool):
+        raise TypeError('AuthRequired used incorrectly. '
+                        'You are likely missing parentheses!')
+
     def decorate(cls):
         if not hasattr(cls, '_cp_config'):
             cls._cp_config = {

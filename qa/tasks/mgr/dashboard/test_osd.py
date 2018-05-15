@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import
 
+import json
+
 from .helper import DashboardTestCase, authenticate, JObj, JAny, JList, JLeaf, JTuple
 
 
@@ -34,3 +36,42 @@ class OsdTest(DashboardTestCase):
         self.assert_in_and_not_none(data['histogram'], ['osd'])
         self.assert_in_and_not_none(data['histogram']['osd'], ['op_w_latency_in_bytes_histogram',
                                                                'op_r_latency_out_bytes_histogram'])
+
+
+class OsdFlagsTest(DashboardTestCase):
+    def __init__(self, *args, **kwargs):
+        super(OsdFlagsTest, self).__init__(*args, **kwargs)
+        self._initial_flags = sorted(
+            ['sortbitwise', 'recovery_deletes', 'purged_snapdirs'])
+
+    def setUp(self):
+        self._put_flags(self._initial_flags)
+
+    @classmethod
+    def _get_cluster_osd_flags(cls):
+        return sorted(
+            json.loads(cls._ceph_cmd(['osd', 'dump',
+                                      '--format=json']))['flags_set'])
+
+    @classmethod
+    def _put_flags(cls, flags):
+        cls._put('/api/osd/flags', data={'flags': flags})
+        return sorted(cls._resp.json())
+
+    @authenticate
+    def test_list_osd_flags(self):
+        flags = self._get('/api/osd/flags')
+        self.assertStatus(200)
+        self.assertEqual(len(flags), 3)
+        self.assertEqual(sorted(flags), self._initial_flags)
+
+    @authenticate
+    def test_add_osd_flag(self):
+        flags = self._put_flags([
+            'sortbitwise', 'recovery_deletes', 'purged_snapdirs', 'noout',
+            'pause'
+        ])
+        self.assertEqual(flags, sorted([
+            'sortbitwise', 'recovery_deletes', 'purged_snapdirs', 'noout',
+            'pause'
+        ]))

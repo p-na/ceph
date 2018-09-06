@@ -23,6 +23,16 @@ export class OsdListComponent implements OnInit {
   statusColor: TemplateRef<any>;
   @ViewChild('osdUsageTpl')
   osdUsageTpl: TemplateRef<any>;
+  @ViewChild('markOsdOutBodyTpl')
+  markOsdOutBodyTpl: TemplateRef<any>;
+  @ViewChild('markOsdInBodyTpl')
+  markOsdInBodyTpl: TemplateRef<any>;
+  @ViewChild('markOsdDownBodyTpl')
+  markOsdDownBodyTpl: TemplateRef<any>;
+  @ViewChild('removeOsdBodyTpl')
+  removeOsdBodyTpl: TemplateRef<any>;
+  @ViewChild('destroyOsdBodyTpl')
+  destroyOsdBodyTpl: TemplateRef<any>;
   @ViewChild(TableComponent)
   tableComponent: TableComponent;
 
@@ -35,7 +45,7 @@ export class OsdListComponent implements OnInit {
   protected static collectStates(osd) {
     return [
       osd['in'] ? 'in' : 'out',
-      osd['up'] ? 'up' : 'out',
+      osd['up'] ? 'up' : 'down',
     ];
   }
 
@@ -75,6 +85,23 @@ export class OsdListComponent implements OnInit {
     this.selection = selection;
   }
 
+  isSelectedOsdInState(state: string): boolean {
+    const osd = this.selection.first();
+    if (this.selection.hasSelection) {
+      switch (state) {
+        case 'in':
+          return osd.in === 1;
+        case 'out':
+          return osd.in !== 1;
+        case 'down':
+          return osd.up !== 1;
+        case 'up':
+          return osd.up === 1;
+      }
+    }
+    console.error('This should not have happened');
+  }
+
   getOsdList() {
     this.osdService.getList().subscribe((data: any[]) => {
       this.osds = data;
@@ -107,5 +134,92 @@ export class OsdListComponent implements OnInit {
 
   configureClusterAction() {
     this.bsModalRef = this.modalService.show(OsdFlagsModalComponent, {});
+  }
+
+  markOut() {
+    this.bsModalRef = this.modalService.show(ConfirmationModalComponent, {
+      initialState: {
+        titleText: 'Mark OSD out',
+        buttonText: 'Mark out',
+        bodyTpl: this.markOsdOutBodyTpl,
+        onSubmit: () => {
+          this.osdService.markOut(this.selection.first().id).subscribe(() => {
+             this.bsModalRef.hide();
+          });
+        }
+      }
+    });
+  }
+
+  markIn() {
+    this.bsModalRef = this.modalService.show(ConfirmationModalComponent, {
+      initialState: {
+        titleText: 'Mark OSD in',
+        buttonText: 'Mark in',
+        bodyTpl: this.markOsdInBodyTpl,
+        onSubmit: () => {
+          this.osdService.markIn(this.selection.first().id).subscribe(() => {
+            this.bsModalRef.hide();
+          });
+        }
+      }
+    });
+  }
+
+  markDown() {
+    this.bsModalRef = this.modalService.show(ConfirmationModalComponent, {
+      initialState: {
+        titleText: 'Mark OSD down',
+        buttonText: 'Mark down',
+        bodyTpl: this.markOsdDownBodyTpl,
+        onSubmit: () => {
+          this.osdService.markDown(this.selection.first().id).subscribe(() => {
+            this.bsModalRef.hide();
+          });
+        }
+      }
+    });
+  }
+
+  create() {
+    // TODO new modal?
+  }
+
+  reweight() {
+    // TODO new modal?
+  }
+
+  remove() {
+    this.bsModalRef = this.modalService.show(ConfirmationModalComponent, {
+      initialState: {
+        titleText: 'Remove OSD',
+        buttonText: 'Remove OSD',
+        bodyTpl: this.removeOsdBodyTpl,
+        onSubmit: () => {
+          this.osdService.remove(this.selection.first().id).subscribe(() => {
+            this.bsModalRef.hide();
+          });
+        }
+      }
+    });
+  }
+
+  destroy() {
+    this.bsModalRef = this.modalService.show(ConfirmationModalComponent, {
+      initialState: {
+        titleText: 'Destroy OSD',
+        buttonText: 'Destroy OSD',
+        bodyTpl: this.destroyOsdBodyTpl,
+        onSubmit: () => {
+          this.osdService.markIn(this.selection.first().id).subscribe(() => {
+            this.bsModalRef.hide();
+          });
+        }
+      }
+    });
+  }
+
+  safeToDestroy() {
+    // TODO how to show that?
   }
 }

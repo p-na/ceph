@@ -32,6 +32,43 @@
             <ng-container i18n>Deep Scrub</ng-container>
           </a>
         </li>
+        <li role="menuitem" [ngClass]="{disabled: isSelectedOsdInState('out')}"
+            (click)="markOut()">
+          <a>
+            <i class="fa fa-fw fa-arrow-left"></i>
+            <ng-container i18n>Mark Out</ng-container>
+          </a>
+        </li>
+        <li role="menuitem" [ngClass]="{disabled: isSelectedOsdInState('in')}"
+            (click)="markIn()"
+            >
+          <a>
+            <i class="fa fa-fw fa-arrow-right"></i>
+            <ng-container i18n>Mark In</ng-container>
+          </a>
+        </li>
+        <li role="menuitem" [ngClass]="{disabled: isSelectedOsdInState('down')}"
+            (click)="markDown()"
+            >
+          <a>
+            <i class="fa fa-fw fa-arrow-down"></i>
+            <ng-container i18n>Mark Down</ng-container>
+          </a>
+        </li>
+        <li role="menuitem"
+            (click)="remove()">
+          <a>
+            <i class="fa fa-fw fa-minus"></i>
+            <ng-container i18n>Remove</ng-container>
+          </a>
+        </li>
+        <li role="menuitem"
+            (click)="destroy()">
+          <a>
+            <i class="fa fa-fw fa-eraser"></i>
+            <ng-container i18n>Destroy</ng-container>
+          </a>
+        </li>
       </ul>
     </div>
 
@@ -61,4 +98,24 @@
              let-row="row">
   <cd-usage-bar [totalBytes]="row.stats.stat_bytes"
                 [usedBytes]="row.stats.stat_bytes_used"></cd-usage-bar>
+</ng-template>
+
+<ng-template #markOsdOutBodyTpl i18n>
+  <strong>OSD {{ selection.first().id }}</strong> will be marked <strong>out</strong> if you proceed.
+</ng-template>
+
+<ng-template #markOsdInBodyTpl i18n>
+  <strong>OSD {{ selection.first().id  }}</strong> will be marked <strong>in</strong> if you proceed.
+</ng-template>
+
+<ng-template #markOsdDownBodyTpl i18n>
+  <strong>OSD {{ selection.first().id  }}</strong> will be marked <strong>down</strong> if you proceed.
+</ng-template>
+
+<ng-template #removeOsdBodyTpl i18n>
+  <strong>OSD {{ selection.first().id  }}</strong> will be <strong>removed</strong> if you proceed.
+</ng-template>
+
+<ng-template #destroyOsdBodyTpl i18n>
+  <strong>OSD {{ selection.first().id  }}</strong> will be <strong>destroyed</strong> if you proceed.
 </ng-template>

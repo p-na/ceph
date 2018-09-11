@@ -26,20 +26,20 @@
           </a>
         </li>
         <li role="menuitem"
-            (click)="scrubAction(true)">
+            (click)="scrubAction(true)" [ngClass]="{disabled: !hasOsdSelected()}">
           <a>
             <i class="fa fa-fw fa-stethoscope"></i>
             <ng-container i18n>Deep Scrub</ng-container>
           </a>
         </li>
-        <li role="menuitem" [ngClass]="{disabled: isSelectedOsdInState('out')}"
+        <li role="menuitem" [ngClass]="{disabled: isNotSelectedOrInState('out')}"
             (click)="markOut()">
           <a>
             <i class="fa fa-fw fa-arrow-left"></i>
             <ng-container i18n>Mark Out</ng-container>
           </a>
         </li>
-        <li role="menuitem" [ngClass]="{disabled: isSelectedOsdInState('in')}"
+        <li role="menuitem" [ngClass]="{disabled: isNotSelectedOrInState('in')}"
             (click)="markIn()"
             >
           <a>
@@ -47,7 +47,7 @@
             <ng-container i18n>Mark In</ng-container>
           </a>
         </li>
-        <li role="menuitem" [ngClass]="{disabled: isSelectedOsdInState('down')}"
+        <li role="menuitem" [ngClass]="{disabled: isNotSelectedOrInState('down')}"
             (click)="markDown()"
             >
           <a>
@@ -56,14 +56,14 @@
           </a>
         </li>
         <li role="menuitem"
-            (click)="remove()">
+            (click)="remove()" [ngClass]="{disabled: !hasOsdSelected()}">
           <a>
             <i class="fa fa-fw fa-minus"></i>
             <ng-container i18n>Remove</ng-container>
           </a>
         </li>
         <li role="menuitem"
-            (click)="destroy()">
+            (click)="destroy()" [ngClass]="{disabled: !hasOsdSelected()}">
           <a>
             <i class="fa fa-fw fa-eraser"></i>
             <ng-container i18n>Destroy</ng-container>

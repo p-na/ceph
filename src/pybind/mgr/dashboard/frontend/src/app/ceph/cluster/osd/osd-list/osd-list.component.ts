@@ -85,7 +85,11 @@ export class OsdListComponent implements OnInit {
     this.selection = selection;
   }
 
-  isSelectedOsdInState(state: string): boolean {
+  /**
+   * Returns true if no row is selected or if the selected row is in the given
+   * state. Useful for deactivating the corresponding menu entry.
+   */
+  isNotSelectedOrInState(state: 'in'|'up'|'down'|'out'): boolean {
     const osd = this.selection.first();
     if (this.selection.hasSelection) {
       switch (state) {
@@ -99,7 +103,7 @@ export class OsdListComponent implements OnInit {
           return osd.up === 1;
       }
     }
-    console.error('This should not have happened');
+    return true;
   }
 
   getOsdList() {
@@ -120,7 +124,7 @@ export class OsdListComponent implements OnInit {
   }
 
   scrubAction(deep) {
-    if (!this.tableComponent.selection.hasSelection) {
+    if (!this.hasOsdSelected) {
       return;
     }
 

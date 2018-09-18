@@ -9,7 +9,6 @@ import { CephfsListComponent } from './ceph/cephfs/cephfs-list/cephfs-list.compo
 import { ConfigurationComponent } from './ceph/cluster/configuration/configuration.component';
 import { HostsComponent } from './ceph/cluster/hosts/hosts.component';
 import { MonitorComponent } from './ceph/cluster/monitor/monitor.component';
-import { OsdFormComponent } from './ceph/cluster/osd/osd-form/osd-form.component';
 import { OsdListComponent } from './ceph/cluster/osd/osd-list/osd-list.component';
 import { DashboardComponent } from './ceph/dashboard/dashboard/dashboard.component';
 import { PerformanceCounterComponent } from './ceph/performance-counter/performance-counter/performance-counter.component';

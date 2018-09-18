@@ -43,10 +43,7 @@ export class OsdListComponent implements OnInit {
   selection = new CdTableSelection();
 
   protected static collectStates(osd) {
-    return [
-      osd['in'] ? 'in' : 'out',
-      osd['up'] ? 'up' : 'down',
-    ];
+    return [osd['in'] ? 'in' : 'out', osd['up'] ? 'up' : 'down'];
   }
 
   constructor(
@@ -89,7 +86,7 @@ export class OsdListComponent implements OnInit {
    * Returns true if no row is selected or if the selected row is in the given
    * state. Useful for deactivating the corresponding menu entry.
    */
-  isNotSelectedOrInState(state: 'in'|'up'|'down'|'out'): boolean {
+  isNotSelectedOrInState(state: 'in' | 'up' | 'down' | 'out'): boolean {
     const osd = this.selection.first();
     if (this.selection.hasSelection) {
       switch (state) {
@@ -148,7 +145,7 @@ export class OsdListComponent implements OnInit {
         bodyTpl: this.markOsdOutBodyTpl,
         onSubmit: () => {
           this.osdService.markOut(this.selection.first().id).subscribe(() => {
-             this.bsModalRef.hide();
+            this.bsModalRef.hide();
           });
         }
       }

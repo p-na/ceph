@@ -44,7 +44,7 @@ export class OsdService {
   }
 
   reweight(id: number, weight: number) {
-    return this.http.post(`${this.path}/${id}/reweight`, {weight: weight});
+    return this.http.post(`${this.path}/${id}/reweight`, { weight: weight });
   }
 
   mark_lost(id: number) {

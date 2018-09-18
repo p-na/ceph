@@ -179,4 +179,18 @@ export class CdValidators {
       );
     };
   }
+
+  static uuid(required = false): ValidatorFn {
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      if (control.pristine && control.untouched) {
+        return null;
+      } else if (!required && !control.value) {
+        return null;
+      } else if (uuidRe.test(control.value)) {
+        return null;
+      }
+      return { invalidUuid: 'This is not a valid UUID' };
+    };
+  }
 }

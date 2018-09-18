@@ -17,6 +17,7 @@ import { OsdFlagsModalComponent } from './osd/osd-flags-modal/osd-flags-modal.co
 import { OsdListComponent } from './osd/osd-list/osd-list.component';
 import { OsdPerformanceHistogramComponent } from './osd/osd-performance-histogram/osd-performance-histogram.component';
 import { OsdScrubModalComponent } from './osd/osd-scrub-modal/osd-scrub-modal.component';
+import { OsdFormComponent } from './osd/osd-form/osd-form.component';
 
 @NgModule({
   entryComponents: [OsdDetailsComponent, OsdScrubModalComponent, OsdFlagsModalComponent],
@@ -41,6 +42,7 @@ import { OsdScrubModalComponent } from './osd/osd-scrub-modal/osd-scrub-modal.co
     OsdScrubModalComponent,
     OsdFlagsModalComponent
     OsdFlagsModalComponent,
+    OsdFormComponent
   ]
 })
 export class ClusterModule {}

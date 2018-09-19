@@ -42,7 +42,7 @@
           <cd-submit-button [form]="osdForm"
                             type="button"
                             (submitAction)="createOsd()"
-                            >
+                            [disabled]="osdForm.invalid">
             <span i18n>Create RBD</span>
           </cd-submit-button>
           <button i18n

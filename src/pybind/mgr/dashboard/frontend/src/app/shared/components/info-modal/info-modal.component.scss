@@ -1,0 +1,16 @@
+@import '../../../../defaults';
+
+.modal-header {
+  border-top: {
+    left-radius: $modal-border-radius;
+    right-radius: $modal-border-radius;
+  }
+  &.danger {
+    background-color: $color-modal-danger-bg;
+    color: white;
+  }
+  &.success {
+    background-color: $color-modal-success-bg;
+    color: white;
+  }
+}

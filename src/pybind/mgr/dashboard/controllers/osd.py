@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+from collections import defaultdict
 from . import ApiController, RESTController, UpdatePermission
 from .. import mgr, logger
 from ..security import Scope
@@ -11,7 +12,13 @@ from ..tools import str_to_bool
 @ApiController('/osd', Scope.OSD)
 class Osd(RESTController):
     def list(self):
-        osds = self.get_osd_map()
+        # import sys; sys.path.append('/tmp/py2-eggs/pycharm-debug.egg')
+        # import pydevd; pydevd.settrace('localhost', port=22222)
+
+        osds = defaultdict(dict)
+
+        for osd_id, osd_data in self.get_osd_map().items():
+            osds[str(osd_id)].update(osd_data)
 
         # Extending by osd stats information
         for s in mgr.get('osd_stats')['osd_stats']:
@@ -20,22 +27,21 @@ class Osd(RESTController):
         # Extending by osd node information
         nodes = mgr.get('osd_map_tree')['nodes']
         osd_tree = [(str(o['id']), o) for o in nodes if o['id'] >= 0]
-        for o in osd_tree:
-            osds[o[0]].update({'tree': o[1]})
+        for osd_id, osd in osd_tree:
+            osds[osd_id].update({'tree': osd})
 
         # Extending by osd parent node information
         hosts = [(h['name'], h) for h in nodes if h['id'] < 0]
         for h in hosts:
-            for o_id in h[1]['children']:
-                if o_id >= 0:
-                    osds[str(o_id)]['host'] = h[1]
+            for osd_id in h[1]['children']:
+                if osd_id >= 0:
+                    osds[str(osd_id)]['host'] = h[1]
 
         # Extending by osd histogram data
-        for o_id in osds:
-            o = osds[o_id]
+        for osd_id, o in osds.items():
             o['stats'] = {}
             o['stats_history'] = {}
-            osd_spec = str(o['osd'])
+            osd_spec = str(o['tree']['id'])
             for s in ['osd.op_w', 'osd.op_in_bytes', 'osd.op_r', 'osd.op_out_bytes']:
                 prop = s.split('.')[1]
                 o['stats'][prop] = CephService.get_rate('osd', osd_spec, s)

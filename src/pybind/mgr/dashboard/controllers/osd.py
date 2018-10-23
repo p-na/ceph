@@ -29,6 +29,8 @@ class Osd(RESTController):
         osd_tree = [(str(o['id']), o) for o in nodes if o['id'] >= 0]
         for osd_id, osd in osd_tree:
             osds[osd_id].update({'tree': osd})
+            if not 'id' in osds[osd_id]:  # Ensures that osds[x]['id'] exists for the frontend table
+                osds[osd_id]['id'] = osd_id
 
         # Extending by osd parent node information
         hosts = [(h['name'], h) for h in nodes if h['id'] < 0]

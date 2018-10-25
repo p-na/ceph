@@ -54,11 +54,16 @@ class Osd(RESTController):
 
         return list(osds.values())
 
-    def get_osd_map(self):
+    def get_osd_map(self, svc_id=None):
         osds = {}
         for osd in mgr.get('osd_map')['osds']:
             osd['id'] = osd['osd']
             osds[str(osd['id'])] = osd
+        if svc_id:
+            try:
+                return osds[str(osds['id'])]
+            except KeyError:
+                return None
         return osds
 
     @handle_send_command_error('osd')
@@ -66,20 +71,20 @@ class Osd(RESTController):
         """
         Returns collected data about an OSD.
 
-        :return: Returns the requested data. The `histogram` key man contain a
+        :return: Returns the requested data. The `histogram` key may contain a
                  string with an error that occurred when the OSD is down.
         """
         try:
             histogram = CephService.send_command('osd', srv_spec=svc_id,
                                                  prefix='perf histogram dump')
         except SendCommandError as e:
-            if 'osd down' in str(e):
+            if any(error in str(e) for error in ['osd down', 'osd dne']):
                 histogram = str(e)
             else:
                 raise
 
         return {
-            'osd_map': self.get_osd_map()[svc_id],
+            'osd_map': self.get_osd_map(svc_id),
             'osd_metadata': mgr.get_metadata('osd', svc_id),
             'histogram': histogram,
         }

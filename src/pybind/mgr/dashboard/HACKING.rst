@@ -1,6 +1,39 @@
 Dashboard Developer Documentation
 ====================================
 
+Development Environment
+-----------------------
+
+The team behind Ceph Dashboard uses a Docker container for its frontend and backend development
+purposes. This container offers a variety of benefits to the developers.
+
+- "Speed"
+
+    Get up and running in minutes!
+
+- Dependency mangement
+
+    All required dependencies for running Ceph in a container are automatically installed.
+
+- Services
+
+    Additional services are provided by docker-compose. To start them, you can simply run
+    `docker-compose` or specify a single service by running `docker-compose <service>`. Examples
+    for these services are Grafana, Prometheus or OpenLDAP. For a full
+    list
+    of supported services, take a look into `docker-compose.yml` in the root directory of the
+    project.
+
+- Tools
+
+    In the background, `vstart.sh` is utilized to run the development cluster on a single host. To
+    run such a cluster, you have to switch to `/ceph/build` directory and issue the command
+    `../src/vstart.sh <options>`.
+
+    `setup-ceph.sh` is a script that bundles the different steps you have to go through to compile
+    Ceph. By default, it uses half of the available CPUs to compile Ceph and provides you with the
+    build flags required to get started quickly.
+
 Frontend Development
 --------------------
 

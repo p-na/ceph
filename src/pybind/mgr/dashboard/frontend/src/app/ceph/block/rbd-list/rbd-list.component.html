@@ -40,3 +40,9 @@
   <strong>{{ value.parent }}</strong> to child
   <strong>{{ value.child }}</strong>.
 </ng-template>
+
+<ng-template #poolTpl
+  let-value="value"
+  let-row="row">
+  <a [routerLink]="['/pool/edit', value]">{{ value }}</a>
+</ng-template>

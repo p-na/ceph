@@ -41,6 +41,8 @@ export class RbdListComponent implements OnInit {
   nameTpl: TemplateRef<any>;
   @ViewChild('flattenTpl')
   flattenTpl: TemplateRef<any>;
+  @ViewChild('poolTpl')
+  poolTpl: TemplateRef<any>;
 
   permission: Permission;
   tableActions: CdTableAction[];
@@ -146,7 +148,8 @@ export class RbdListComponent implements OnInit {
       {
         name: this.i18n('Pool'),
         prop: 'pool_name',
-        flexGrow: 2
+        flexGrow: 2,
+        cellTemplate: this.poolTpl
       },
       {
         name: this.i18n('Size'),

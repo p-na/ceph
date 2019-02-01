@@ -148,6 +148,14 @@ class Osd(RESTController):
         CephService.send_command('mon', 'osd rm', ids=[svc_id])
 
     @RESTController.Resource('POST')
+    def purge(self, svc_id):
+        """
+        Note: osd must be marked `down` before removal.
+        """
+        CephService.send_command('mon', 'osd purge-actual', id=int(svc_id),
+                                 yes_i_really_mean_it=True)
+
+    @RESTController.Resource('POST')
     def destroy(self, svc_id):
         """
         Mark osd as being destroyed. Keeps the ID intact (allowing reuse), but

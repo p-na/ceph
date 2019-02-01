@@ -97,6 +97,16 @@ class OsdTest(DashboardTestCase):
         self._post('/api/osd/5/remove')
         self.assertStatus(200)
 
+    def test_create_purge(self):
+        self._post('/api/osd', {
+            'uuid': 'f860ca2e-757d-48ce-b75a-87052cad563f',
+            'svc_id': 10
+        })
+        self.assertStatus(201)
+        self._post('/api/osd/10/purge')
+        self.assertStatus(200)
+
+
     def test_safe_to_destroy(self):
         osd_dump = json.loads(self._ceph_cmd(['osd', 'dump', '-f', 'json']))
         unused_osd_id = max(map(lambda e: e['osd'], osd_dump['osds'])) + 10

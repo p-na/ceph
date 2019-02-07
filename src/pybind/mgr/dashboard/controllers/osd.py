@@ -141,13 +141,6 @@ class Osd(RESTController):
         }
 
     @RESTController.Resource('POST')
-    def remove(self, svc_id):
-        """
-        Note: osd must be marked `down` before removal.
-        """
-        CephService.send_command('mon', 'osd rm', ids=[svc_id])
-
-    @RESTController.Resource('POST')
     def purge(self, svc_id):
         """
         Note: osd must be marked `down` before removal.

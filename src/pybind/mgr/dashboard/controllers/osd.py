@@ -11,7 +11,6 @@ from ..tools import str_to_bool
 @ApiController('/osd', Scope.OSD)
 class Osd(RESTController):
     def list(self):
-        # osds = defaultdict(dict, self.get_osd_map())
         osds = self.get_osd_map()
 
         # Extending by osd stats information
@@ -23,7 +22,7 @@ class Osd(RESTController):
         osd_tree = [(str(o['id']), o) for o in nodes if o['type'] == 'osd']
         for osd_id, osd in osd_tree:
             if osd_id in osds:
-                osds[osd_id].update({'tree': osd})
+                osds[osd_id]['tree'] = osd
 
         # Extending by osd parent node information
         hosts = [(n['name'], n) for n in nodes if n['type'] == 'host']
@@ -34,7 +33,7 @@ class Osd(RESTController):
                     osds[str(osd_id)]['host'] = host
 
         # Extending by osd histogram data
-        for osd_id, osd in osds:
+        for osd_id, osd in osds.items():
             osd['stats'] = {}
             osd['stats_history'] = {}
             if 'osd' not in osd:

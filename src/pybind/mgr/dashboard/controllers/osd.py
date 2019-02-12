@@ -11,6 +11,7 @@ from ..tools import str_to_bool
 @ApiController('/osd', Scope.OSD)
 class Osd(RESTController):
     def list(self):
+        # osds = defaultdict(dict, self.get_osd_map())
         osds = self.get_osd_map()
 
         # Extending by osd stats information
@@ -19,34 +20,38 @@ class Osd(RESTController):
 
         # Extending by osd node information
         nodes = mgr.get('osd_map_tree')['nodes']
-        osd_tree = [(str(o['id']), o) for o in nodes if o['id'] >= 0]
-        for o in osd_tree:
-            osds[o[0]].update({'tree': o[1]})
+        osd_tree = [(str(o['id']), o) for o in nodes if o['type'] == 'osd']
+        for osd_id, osd in osd_tree:
+            if osd_id in osds:
+                osds[osd_id].update({'tree': osd})
 
         # Extending by osd parent node information
-        hosts = [(h['name'], h) for h in nodes if h['id'] < 0]
-        for h in hosts:
-            for o_id in h[1]['children']:
-                if o_id >= 0:
-                    osds[str(o_id)]['host'] = h[1]
+        hosts = [(n['name'], n) for n in nodes if n['type'] == 'host']
+        osd_ids = [int(o) for o in osds.keys()]
+        for hostname, host in hosts:
+            for osd_id in host['children']:
+                if osd_id >= 0 and osd_id in osd_ids:
+                    osds[str(osd_id)]['host'] = host
 
         # Extending by osd histogram data
-        for o_id in osds:
-            o = osds[o_id]
-            o['stats'] = {}
-            o['stats_history'] = {}
-            osd_spec = str(o['osd'])
+        for osd_id, osd in osds:
+            osd['stats'] = {}
+            osd['stats_history'] = {}
+            if 'osd' not in osd:
+                continue
+            osd_spec = str(osd['osd'])
             for s in ['osd.op_w', 'osd.op_in_bytes', 'osd.op_r', 'osd.op_out_bytes']:
                 prop = s.split('.')[1]
-                o['stats'][prop] = CephService.get_rate('osd', osd_spec, s)
-                o['stats_history'][prop] = CephService.get_rates('osd', osd_spec, s)
+                osd['stats'][prop] = CephService.get_rate('osd', osd_spec, s)
+                osd['stats_history'][prop] = CephService.get_rates('osd', osd_spec, s)
             # Gauge stats
             for s in ['osd.numpg', 'osd.stat_bytes', 'osd.stat_bytes_used']:
-                o['stats'][s.split('.')[1]] = mgr.get_latest('osd', osd_spec, s)
+                osd['stats'][s.split('.')[1]] = mgr.get_latest('osd', osd_spec, s)
 
         return list(osds.values())
 
-    def get_osd_map(self):
+    @staticmethod
+    def get_osd_map():
         osds = {}
         for osd in mgr.get('osd_map')['osds']:
             osd['id'] = osd['osd']

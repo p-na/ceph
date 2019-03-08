@@ -21,6 +21,11 @@ try:
 except ImportError:
     from urllib.parse import urljoin
 
+try:
+    from typing import Dict, Any  # pylint: disable=unused-import
+except ImportError:
+    pass  # just for type hints
+
 from . import logger, mgr
 from .exceptions import ViewCacheNoDataException
 from .settings import Settings
@@ -910,3 +915,31 @@ def find_object_in_list(key, value, iterable):
         if key in obj and obj[key] == value:
             return obj
     return None
+
+
+def update_dict(data, update_data):
+    # type: (Dict[Any, Any], Dict[Any, Any]) -> Dict[Any]
+    """
+    Update a dictionary recursively.
+
+    Eases doing so by providing the option to separate the key to be updated with dot characters.
+
+    >>> update_dict({'foo': {'bar': 5}}, {'foo.bar': 10})
+    {'foo': {'bar': 10}}
+    """
+    for k, v in update_data.items():
+        keys = k.split('.')
+        element = None
+        for i, key in enumerate(keys):
+            last = False
+            if len(keys) == i + 1:
+                last = True
+
+            if not element:
+                element = data[key]
+            elif not last:
+                element = element[key]  # pylint: disable=unsubscriptable-object
+
+            if last:
+                element[key] = v
+    return data

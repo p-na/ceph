@@ -79,16 +79,6 @@ describe('TableComponent', () => {
     expect(component.userConfig.limit).toBe(1);
   });
 
-  it('should force an identifier', () => {
-    clearLocalStorage();
-    component.identifier = 'x';
-    component.forceIdentifier = true;
-    component.ngOnInit();
-    expect(component.identifier).toBe('x');
-    expect(component.sorts[0].prop).toBe('a');
-    expect(component.sorts).toEqual(component.createSortingDefinition('a'));
-  });
-
   describe('test search', () => {
     const expectSearch = (keyword: string, expectedResult: object[]) => {
       component.search = keyword;
@@ -131,12 +121,13 @@ describe('TableComponent', () => {
 
     it('should search for multiple values', () => {
       expectSearch('2 20 false', [{ a: 2, b: 20, c: false }]);
+      expectSearch('false 2', [{ a: 2, b: 20, c: false }]);
     });
 
     it('should filter by column', () => {
       expectSearch('index:5', [{ a: 5, b: 50, c: true }]);
-      expectSearch(`times:50`, [{ a: 5, b: 50, c: true }]);
-      expectSearch(`times:50 index:5`, [{ a: 5, b: 50, c: true }]);
+      expectSearch('times:50', [{ a: 5, b: 50, c: true }]);
+      expectSearch('times:50 index:5', [{ a: 5, b: 50, c: true }]);
       expectSearch('Odd?:true', [
         { a: 1, b: 10, c: true },
         { a: 3, b: 30, c: true },
@@ -144,6 +135,8 @@ describe('TableComponent', () => {
         { a: 7, b: 70, c: true },
         { a: 9, b: 90, c: true }
       ]);
+      component.data = createFakeData(100);
+      expectSearch('index:1 odd:true times:110', [{ a: 11, b: 110, c: true }]);
     });
 
     it('should search through arrays', () => {
@@ -152,6 +145,7 @@ describe('TableComponent', () => {
       component.data = [{ a: 1, b: ['foo', 'bar'] }, { a: 2, b: ['baz', 'bazinga'] }];
       expectSearch('bar', [{ a: 1, b: ['foo', 'bar'] }]);
       expectSearch('arraycolumn:bar arraycolumn:foo', [{ a: 1, b: ['foo', 'bar'] }]);
+      expectSearch('arraycolumn:baz arraycolumn:inga', [{ a: 2, b: ['baz', 'bazinga'] }]);
 
       component.data = [{ a: 1, b: [1, 2] }, { a: 2, b: [3, 4] }];
       expectSearch('arraycolumn:1 arraycolumn:2', [{ a: 1, b: [1, 2] }]);

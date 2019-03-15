@@ -59,8 +59,7 @@ class Osd(RESTController):
             return osd
         resp = {
             osd['osd']: add_id(osd)
-            for osd in mgr.get('osd_map')['osds']
-            if svc_id is None or (svc_id is not None and osd['osd'] == int(svc_id))
+            for osd in mgr.get('osd_map')['osds'] if svc_id is None or osd['osd'] == int(svc_id)
         }
         return resp if svc_id is None else resp[int(svc_id)]
 

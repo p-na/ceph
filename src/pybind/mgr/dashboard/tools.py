@@ -939,6 +939,11 @@ def update_dict(data, update_data):
     Traceback (most recent call last):
         ...
     KeyError: 'xyz'
+
+    >>> update_dict({'foo': {'bar': 5}}, {'foo.xyz': 10})
+    Traceback (most recent call last):
+        ...
+    KeyError: 'xyz'
     """
     for k, v in update_data.items():
         keys = k.split('.')
@@ -954,5 +959,8 @@ def update_dict(data, update_data):
                 element = element[key]  # pylint: disable=unsubscriptable-object
 
             if last:
+                if key not in element:
+                    raise KeyError(key)
+
                 element[key] = v
     return data

@@ -6,7 +6,7 @@ from contextlib import contextmanager
 
 from mock import patch
 
-from .helper import ControllerTestCase
+from . import ControllerTestCase
 from ..controllers.osd import Osd
 from .. import mgr
 from ..tools import update_dict

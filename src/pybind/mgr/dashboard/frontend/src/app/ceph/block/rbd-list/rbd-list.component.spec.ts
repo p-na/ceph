@@ -220,7 +220,7 @@ describe('RbdListComponent', () => {
 
     describe('with all', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(1, 1, 1);
+        tableActions = permissionHelper.setPermissionsAndGetActions(true, true, true);
       });
 
       it(`shows 'Edit' for single selection else 'Add' as main action`, () =>
@@ -234,7 +234,7 @@ describe('RbdListComponent', () => {
 
     describe('with read, create and update', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(1, 1, 0);
+        tableActions = permissionHelper.setPermissionsAndGetActions(true, true, false);
       });
 
       it(`shows 'Edit' for single selection else 'Add' as main action`, () =>
@@ -250,7 +250,7 @@ describe('RbdListComponent', () => {
 
     describe('with read, create and delete', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(1, 0, 1);
+        tableActions = permissionHelper.setPermissionsAndGetActions(true, false, true);
       });
 
       it(`shows 'Copy' for single selection else 'Add' as main action`, () => {
@@ -271,7 +271,7 @@ describe('RbdListComponent', () => {
 
     describe('with read, edit and delete', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(0, 1, 1);
+        tableActions = permissionHelper.setPermissionsAndGetActions(false, true, true);
       });
 
       it(`shows always 'Edit' as main action`, () => {
@@ -292,7 +292,7 @@ describe('RbdListComponent', () => {
 
     describe('with read and create', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(1, 0, 0);
+        tableActions = permissionHelper.setPermissionsAndGetActions(true, false, false);
       });
 
       it(`shows 'Copy' for single selection else 'Add' as main action`, () => {
@@ -311,7 +311,7 @@ describe('RbdListComponent', () => {
 
     describe('with read and edit', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(0, 1, 0);
+        tableActions = permissionHelper.setPermissionsAndGetActions(false, true, false);
       });
 
       it(`shows always 'Edit' as main action`, () => {
@@ -330,7 +330,7 @@ describe('RbdListComponent', () => {
 
     describe('with read and delete', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(0, 0, 1);
+        tableActions = permissionHelper.setPermissionsAndGetActions(false, false, true);
       });
 
       it(`shows always 'Delete' as main action`, () => {
@@ -350,7 +350,7 @@ describe('RbdListComponent', () => {
 
     describe('with only read', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(0, 0, 0);
+        tableActions = permissionHelper.setPermissionsAndGetActions(false, false, false);
       });
 
       it('shows no main action', () => {

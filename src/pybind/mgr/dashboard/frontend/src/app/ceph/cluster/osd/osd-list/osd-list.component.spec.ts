@@ -189,7 +189,7 @@ describe('OsdListComponent', () => {
         single: 'Scrub',
         empty: 'Scrub'
       };
-      tableActions = permissionHelper.setPermissionsAndGetActions(1, 1, 1);
+      tableActions = permissionHelper.setPermissionsAndGetActions(true, true, true);
     });
 
     it('shows action button', () => permissionHelper.testScenarios(scenario));

@@ -50,13 +50,13 @@ export class PermissionHelper {
   }
 
   setPermissionsAndGetActions(
-    createPerm: number | boolean,
-    updatePerm: number | boolean,
-    deletePerm: number | boolean
+    createPerm: boolean,
+    updatePerm: boolean,
+    deletePerm: boolean
   ): TableActionsComponent {
-    this.permission.create = Boolean(createPerm);
-    this.permission.update = Boolean(updatePerm);
-    this.permission.delete = Boolean(deletePerm);
+    this.permission.create = createPerm;
+    this.permission.update = updatePerm;
+    this.permission.delete = deletePerm;
     this.tableActions = this.getTableActionComponent();
     return this.tableActions;
   }

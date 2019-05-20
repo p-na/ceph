@@ -90,7 +90,7 @@ describe('TableActionsComponent', () => {
     component.permission = new Permission();
     component.permission.read = true;
     permissionHelper = new PermissionHelper(component.permission, () => getTableActionComponent());
-    permissionHelper.setPermissionsAndGetActions(1, 1, 1);
+    permissionHelper.setPermissionsAndGetActions(true, true, true);
   });
 
   it('should create', () => {
@@ -194,58 +194,58 @@ describe('TableActionsComponent', () => {
     it('gets add for no, edit for single and delete for multiple selections', () => {
       setScenario(addAction, editAction);
       scenario.multiple = deleteAction;
-      permissionHelper.setPermissionsAndGetActions(1, 1, 1);
+      permissionHelper.setPermissionsAndGetActions(true, true, true);
       permissionHelper.testScenarios(scenario);
     });
 
     it('gets add action except for selections where it shows edit action', () => {
       setScenario(addAction, editAction);
-      permissionHelper.setPermissionsAndGetActions(1, 1, 0);
+      permissionHelper.setPermissionsAndGetActions(true, true, false);
       permissionHelper.testScenarios(scenario);
     });
 
     it('gets add for no, copy for single and delete for multiple selections', () => {
       setScenario(addAction, copyAction);
       scenario.multiple = deleteAction;
-      permissionHelper.setPermissionsAndGetActions(1, 0, 1);
+      permissionHelper.setPermissionsAndGetActions(true, false, true);
       permissionHelper.testScenarios(scenario);
     });
 
     it('gets add action except for selections where it shows copy action', () => {
       setScenario(addAction, copyAction);
-      permissionHelper.setPermissionsAndGetActions(1, 0, 0);
+      permissionHelper.setPermissionsAndGetActions(true , false, false);
       permissionHelper.testScenarios(scenario);
     });
 
     it('should always get edit action except delete for multiple items', () => {
       setScenario(editAction, editAction);
       scenario.multiple = deleteAction;
-      permissionHelper.setPermissionsAndGetActions(0, 1, 1);
+      permissionHelper.setPermissionsAndGetActions(false, true, true);
       permissionHelper.testScenarios(scenario);
     });
 
     it('should always get edit action', () => {
       setScenario(editAction, editAction);
-      permissionHelper.setPermissionsAndGetActions(0, 1, 0);
+      permissionHelper.setPermissionsAndGetActions(false, true, false);
       permissionHelper.testScenarios(scenario);
     });
 
     it('should always get delete action', () => {
       setScenario(deleteAction, deleteAction);
-      permissionHelper.setPermissionsAndGetActions(0, 0, 1);
+      permissionHelper.setPermissionsAndGetActions(false, false, true);
       permissionHelper.testScenarios(scenario);
     });
 
     it('should not get any button with no permissions', () => {
       hiddenScenario();
-      permissionHelper.setPermissionsAndGetActions(0, 0, 0);
+      permissionHelper.setPermissionsAndGetActions(false, false, false);
       permissionHelper.testScenarios(scenario);
     });
 
     it('should not get any button if only a drop down should be shown', () => {
       hiddenScenario();
       component.onlyDropDown = 'Drop down label';
-      permissionHelper.setPermissionsAndGetActions(1, 1, 1);
+      permissionHelper.setPermissionsAndGetActions(true, true, true);
       permissionHelper.testScenarios(scenario);
     });
   });
@@ -257,13 +257,13 @@ describe('TableActionsComponent', () => {
     };
 
     it('is shown if multiple items are found depending on the permissions', () => {
-      [[1, 0, 0], [1, 1, 1], [1, 1, 0], [1, 0, 1], [0, 1, 1], [0, 1, 0]].forEach((perms) => {
+      [[true, false, false], [true, true, true], [true, true, false], [true, false, true], [false, true, true], [false, true, false]].forEach((perms) => {
         testShowDropDownActions(perms, true);
       });
     });
 
     it('is not shown if only 1 or less items are found depending on the permissions', () => {
-      [[0, 0, 1], [0, 0, 0]].forEach((perms) => {
+      [[false, false, true], [false, false, false]].forEach((perms) => {
         testShowDropDownActions(perms, false);
       });
     });

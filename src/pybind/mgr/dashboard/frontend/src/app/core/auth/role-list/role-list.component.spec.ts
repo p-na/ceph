@@ -67,7 +67,7 @@ describe('RoleListComponent', () => {
 
     describe('with all', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(1, 1, 1);
+        tableActions = permissionHelper.setPermissionsAndGetActions(true, true, true);
       });
 
       it(`shows 'Edit' for single selection else 'Add' as main action`, () =>
@@ -81,7 +81,7 @@ describe('RoleListComponent', () => {
 
     describe('with read, create and update', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(1, 1, 0);
+        tableActions = permissionHelper.setPermissionsAndGetActions(true, true, false);
       });
 
       it(`shows 'Edit' for single selection else 'Add' as main action`, () =>
@@ -96,7 +96,7 @@ describe('RoleListComponent', () => {
 
     describe('with read, create and delete', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(1, 0, 1);
+        tableActions = permissionHelper.setPermissionsAndGetActions(true, false, true);
       });
 
       it(`shows 'Delete' for single selection else 'Add' as main action`, () => {
@@ -115,7 +115,7 @@ describe('RoleListComponent', () => {
 
     describe('with read, edit and delete', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(0, 1, 1);
+        tableActions = permissionHelper.setPermissionsAndGetActions(false, true, true);
       });
 
       it(`shows always 'Edit' as main action`, () => {
@@ -134,7 +134,7 @@ describe('RoleListComponent', () => {
 
     describe('with read and create', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(1, 0, 0);
+        tableActions = permissionHelper.setPermissionsAndGetActions(true, false, false);
       });
 
       it(`shows always 'Add' as main action`, () => {
@@ -150,7 +150,7 @@ describe('RoleListComponent', () => {
 
     describe('with read and update', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(0, 1, 0);
+        tableActions = permissionHelper.setPermissionsAndGetActions(false, true, false);
       });
 
       it(`shows always 'Edit' as main action`, () => {
@@ -166,7 +166,7 @@ describe('RoleListComponent', () => {
 
     describe('with read and delete', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(0, 0, 1);
+        tableActions = permissionHelper.setPermissionsAndGetActions(false, false, true);
       });
 
       it(`shows always 'Delete' as main action`, () => {
@@ -183,7 +183,7 @@ describe('RoleListComponent', () => {
 
     describe('with only read', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(0, 0, 0);
+        tableActions = permissionHelper.setPermissionsAndGetActions(false, false, false);
       });
 
       it('shows no main action', () => {

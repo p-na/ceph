@@ -73,7 +73,7 @@ describe('MgrModuleListComponent', () => {
 
     describe('with read and update', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(0, 1, 0);
+        tableActions = permissionHelper.setPermissionsAndGetActions(false, true, false);
       });
 
       it('shows action button', () => permissionHelper.testScenarios(scenario));
@@ -86,7 +86,7 @@ describe('MgrModuleListComponent', () => {
 
     describe('with only read', () => {
       beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(0, 0, 0);
+        tableActions = permissionHelper.setPermissionsAndGetActions(false, false, false);
       });
 
       it('shows no main action', () => {

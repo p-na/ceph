@@ -194,16 +194,6 @@ export class FixtureHelper {
     expect(Boolean(this.getElementByCss(css))).toBe(visibility);
   }
 
-  expectFormFieldToBe(css: string, value: string) {
-    const props = this.getElementByCss(css).properties;
-    expect(props['value'] || props['checked'].toString()).toBe(value);
-  }
-
-  clickElement(css: string) {
-    this.getElementByCss(css).triggerEventHandler('click', null);
-    this.fixture.detectChanges();
-  }
-
   getText(css: string) {
     const e = this.getElementByCss(css);
     return e ? e.nativeElement.textContent.trim() : null;

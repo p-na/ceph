@@ -213,8 +213,10 @@ describe('RbdSnapshotListComponent', () => {
 
   describe('show action buttons and drop down actions depending on permissions', () => {
     let tableActions: TableActionsComponent;
-    let scenario: { fn; empty; single };
+    let single;
+    let empty;
     let permissionHelper: PermissionHelper;
+    const fn = () => tableActions.getCurrentButton().name;
 
     const getTableActionComponent = (): TableActionsComponent => {
       fixture.detectChanges();
@@ -225,11 +227,8 @@ describe('RbdSnapshotListComponent', () => {
       permissionHelper = new PermissionHelper(component.permission, () =>
         getTableActionComponent()
       );
-      scenario = {
-        fn: () => tableActions.getCurrentButton().name,
-        single: 'Rename',
-        empty: 'Create'
-      };
+      single = 'Rename';
+      empty = 'Create';
     });
 
     describe('with all', () => {
@@ -238,7 +237,7 @@ describe('RbdSnapshotListComponent', () => {
       });
 
       it(`shows 'Rename' for single selection else 'Create' as main action`, () =>
-        permissionHelper.testScenarios(scenario));
+        permissionHelper.testScenarios(fn, empty, single));
 
       it('shows all actions', () => {
         expect(tableActions.tableActions.length).toBe(8);
@@ -252,7 +251,7 @@ describe('RbdSnapshotListComponent', () => {
       });
 
       it(`shows 'Rename' for single selection else 'Create' as main action`, () =>
-        permissionHelper.testScenarios(scenario));
+        permissionHelper.testScenarios(fn, empty, single));
 
       it(`shows all actions except for 'Delete'`, () => {
         expect(tableActions.tableActions.length).toBe(7);
@@ -267,8 +266,8 @@ describe('RbdSnapshotListComponent', () => {
       });
 
       it(`shows 'Clone' for single selection else 'Create' as main action`, () => {
-        scenario.single = 'Clone';
-        permissionHelper.testScenarios(scenario);
+        single = 'Clone';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Create', 'Clone', 'Copy' and 'Delete' action`, () => {
@@ -288,8 +287,8 @@ describe('RbdSnapshotListComponent', () => {
       });
 
       it(`shows always 'Rename' as main action`, () => {
-        scenario.empty = 'Rename';
-        permissionHelper.testScenarios(scenario);
+        empty = 'Rename';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Rename', 'Protect', 'Unprotect', 'Rollback' and 'Delete' action`, () => {
@@ -310,8 +309,8 @@ describe('RbdSnapshotListComponent', () => {
       });
 
       it(`shows 'Clone' for single selection else 'Create' as main action`, () => {
-        scenario.single = 'Clone';
-        permissionHelper.testScenarios(scenario);
+        single = 'Clone';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Create', 'Clone' and 'Copy' actions`, () => {
@@ -330,8 +329,8 @@ describe('RbdSnapshotListComponent', () => {
       });
 
       it(`shows always 'Rename' as main action`, () => {
-        scenario.empty = 'Rename';
-        permissionHelper.testScenarios(scenario);
+        empty = 'Rename';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Rename', 'Protect', 'Unprotect' and 'Rollback' actions`, () => {
@@ -351,9 +350,9 @@ describe('RbdSnapshotListComponent', () => {
       });
 
       it(`shows always 'Delete' as main action`, () => {
-        scenario.single = 'Delete';
-        scenario.empty = 'Delete';
-        permissionHelper.testScenarios(scenario);
+        single = 'Delete';
+        empty = 'Delete';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows only 'Delete' action`, () => {
@@ -368,11 +367,7 @@ describe('RbdSnapshotListComponent', () => {
       });
 
       it('shows no main action', () => {
-        permissionHelper.testScenarios({
-          fn: () => tableActions.getCurrentButton(),
-          single: undefined,
-          empty: undefined
-        });
+        permissionHelper.testScenarios(() => tableActions.getCurrentButton(), undefined, undefined);
       });
 
       it('shows no actions', () => {

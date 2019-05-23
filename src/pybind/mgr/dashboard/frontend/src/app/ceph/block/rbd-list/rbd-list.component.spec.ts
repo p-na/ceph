@@ -199,8 +199,10 @@ describe('RbdListComponent', () => {
 
   describe('show action buttons and drop down actions depending on permissions', () => {
     let tableActions: TableActionsComponent;
-    let scenario: { fn; empty; single };
+    let empty;
+    let single;
     let permissionHelper: PermissionHelper;
+    const fn = () => tableActions.getCurrentButton().name;
 
     const getTableActionComponent = (): TableActionsComponent => {
       fixture.detectChanges();
@@ -211,11 +213,8 @@ describe('RbdListComponent', () => {
       permissionHelper = new PermissionHelper(component.permission, () =>
         getTableActionComponent()
       );
-      scenario = {
-        fn: () => tableActions.getCurrentButton().name,
-        single: ActionLabels.EDIT,
-        empty: ActionLabels.CREATE
-      };
+      single = ActionLabels.EDIT;
+      empty = ActionLabels.CREATE;
     });
 
     describe('with all', () => {
@@ -224,7 +223,7 @@ describe('RbdListComponent', () => {
       });
 
       it(`shows 'Edit' for single selection else 'Add' as main action`, () =>
-        permissionHelper.testScenarios(scenario));
+        permissionHelper.testScenarios(fn, empty, single));
 
       it('shows all actions', () => {
         expect(tableActions.tableActions.length).toBe(6);
@@ -238,7 +237,7 @@ describe('RbdListComponent', () => {
       });
 
       it(`shows 'Edit' for single selection else 'Add' as main action`, () =>
-        permissionHelper.testScenarios(scenario));
+        permissionHelper.testScenarios(fn, empty, single));
 
       it(`shows all actions except for 'Delete' and 'Move'`, () => {
         expect(tableActions.tableActions.length).toBe(4);
@@ -254,8 +253,8 @@ describe('RbdListComponent', () => {
       });
 
       it(`shows 'Copy' for single selection else 'Add' as main action`, () => {
-        scenario.single = 'Copy';
-        permissionHelper.testScenarios(scenario);
+        single = 'Copy';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Add', 'Copy', 'Delete' and 'Move' action`, () => {
@@ -275,8 +274,8 @@ describe('RbdListComponent', () => {
       });
 
       it(`shows always 'Edit' as main action`, () => {
-        scenario.empty = 'Edit';
-        permissionHelper.testScenarios(scenario);
+        empty = 'Edit';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Edit', 'Flatten', 'Delete' and 'Move' action`, () => {
@@ -296,8 +295,8 @@ describe('RbdListComponent', () => {
       });
 
       it(`shows 'Copy' for single selection else 'Add' as main action`, () => {
-        scenario.single = 'Copy';
-        permissionHelper.testScenarios(scenario);
+        single = 'Copy';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Copy' and 'Add' actions`, () => {
@@ -315,8 +314,8 @@ describe('RbdListComponent', () => {
       });
 
       it(`shows always 'Edit' as main action`, () => {
-        scenario.empty = 'Edit';
-        permissionHelper.testScenarios(scenario);
+        empty = 'Edit';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Edit' and 'Flatten' actions`, () => {
@@ -334,9 +333,9 @@ describe('RbdListComponent', () => {
       });
 
       it(`shows always 'Delete' as main action`, () => {
-        scenario.single = 'Delete';
-        scenario.empty = 'Delete';
-        permissionHelper.testScenarios(scenario);
+        single = 'Delete';
+        empty = 'Delete';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Delete' and 'Move' actions`, () => {
@@ -354,11 +353,7 @@ describe('RbdListComponent', () => {
       });
 
       it('shows no main action', () => {
-        permissionHelper.testScenarios({
-          fn: () => tableActions.getCurrentButton(),
-          single: undefined,
-          empty: undefined
-        });
+        permissionHelper.testScenarios(() => tableActions.getCurrentButton(), undefined, undefined);
       });
 
       it('shows no actions', () => {

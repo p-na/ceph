@@ -171,7 +171,7 @@ describe('NfsListComponent', () => {
 
   describe('show action buttons and drop down actions depending on permissions', () => {
     let tableActions: TableActionsComponent;
-    let scenario: { fn; empty; single };
+    let fn, empty, single;
     let permissionHelper: PermissionHelper;
 
     const getTableActionComponent = (): TableActionsComponent => {
@@ -183,11 +183,9 @@ describe('NfsListComponent', () => {
       permissionHelper = new PermissionHelper(component.permission, () =>
         getTableActionComponent()
       );
-      scenario = {
-        fn: () => tableActions.getCurrentButton().name,
-        single: 'Edit',
-        empty: 'Add'
-      };
+      fn = () => tableActions.getCurrentButton().name;
+      single = 'Edit';
+      empty = 'Add';
     });
 
     describe('with all', () => {
@@ -196,7 +194,7 @@ describe('NfsListComponent', () => {
       });
 
       it(`shows 'Edit' for single selection else 'Add' as main action`, () =>
-        permissionHelper.testScenarios(scenario));
+        permissionHelper.testScenarios(fn, empty, single));
 
       it('shows all actions', () => {
         expect(tableActions.tableActions.length).toBe(3);
@@ -210,7 +208,7 @@ describe('NfsListComponent', () => {
       });
 
       it(`shows 'Edit' for single selection else 'Add' as main action`, () =>
-        permissionHelper.testScenarios(scenario));
+        permissionHelper.testScenarios(fn, empty, single));
 
       it(`shows all actions except for 'Delete'`, () => {
         expect(tableActions.tableActions.length).toBe(2);
@@ -225,8 +223,8 @@ describe('NfsListComponent', () => {
       });
 
       it(`shows 'Delete' for single selection else 'Add' as main action`, () => {
-        scenario.single = 'Delete';
-        permissionHelper.testScenarios(scenario);
+        single = 'Delete';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Add', and 'Delete'  action`, () => {
@@ -244,8 +242,8 @@ describe('NfsListComponent', () => {
       });
 
       it(`shows always 'Edit' as main action`, () => {
-        scenario.empty = 'Edit';
-        permissionHelper.testScenarios(scenario);
+        empty = 'Edit';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Edit' and 'Delete' actions`, () => {
@@ -263,8 +261,8 @@ describe('NfsListComponent', () => {
       });
 
       it(`always shows 'Add' as main action`, () => {
-        scenario.single = 'Add';
-        permissionHelper.testScenarios(scenario);
+        single = 'Add';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Add' action`, () => {
@@ -279,8 +277,8 @@ describe('NfsListComponent', () => {
       });
 
       it(`shows always 'Edit' as main action`, () => {
-        scenario.empty = 'Edit';
-        permissionHelper.testScenarios(scenario);
+        empty = 'Edit';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Edit' action`, () => {
@@ -295,9 +293,9 @@ describe('NfsListComponent', () => {
       });
 
       it(`shows always 'Delete' as main action`, () => {
-        scenario.single = 'Delete';
-        scenario.empty = 'Delete';
-        permissionHelper.testScenarios(scenario);
+        single = 'Delete';
+        empty = 'Delete';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Delete' action`, () => {
@@ -312,11 +310,7 @@ describe('NfsListComponent', () => {
       });
 
       it('shows no main action', () => {
-        permissionHelper.testScenarios({
-          fn: () => tableActions.getCurrentButton(),
-          single: undefined,
-          empty: undefined
-        });
+        permissionHelper.testScenarios(() => tableActions.getCurrentButton(), undefined, undefined);
       });
 
       it('shows no actions', () => {

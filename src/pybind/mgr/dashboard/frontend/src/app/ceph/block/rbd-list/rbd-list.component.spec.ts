@@ -14,7 +14,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import {
   configureTestBed,
   i18nProviders,
-  PermissionHelper
+  PermissionHelper, testTableActions
 } from '../../../../testing/unit-test-helper';
 import { RbdService } from '../../../shared/api/rbd.service';
 import { ActionLabels } from '../../../shared/constants/app.constants';
@@ -30,6 +30,27 @@ import { RbdSnapshotListComponent } from '../rbd-snapshot-list/rbd-snapshot-list
 import { RbdListComponent } from './rbd-list.component';
 import { RbdModel } from './rbd-model';
 
+const testBedConfiguration = {
+  imports: [
+    SharedModule,
+    BsDropdownModule.forRoot(),
+    TabsModule.forRoot(),
+    ModalModule.forRoot(),
+    TooltipModule.forRoot(),
+    ToastModule.forRoot(),
+    AlertModule.forRoot(),
+    RouterTestingModule,
+    HttpClientTestingModule
+  ],
+  declarations: [
+    RbdListComponent,
+    RbdDetailsComponent,
+    RbdSnapshotListComponent,
+    RbdConfigurationListComponent
+  ],
+  providers: [TaskListService, i18nProviders]
+};
+
 describe('RbdListComponent', () => {
   let fixture: ComponentFixture<RbdListComponent>;
   let component: RbdListComponent;
@@ -40,26 +61,7 @@ describe('RbdListComponent', () => {
     summaryService['summaryDataSource'].next(data);
   };
 
-  configureTestBed({
-    imports: [
-      SharedModule,
-      BsDropdownModule.forRoot(),
-      TabsModule.forRoot(),
-      ModalModule.forRoot(),
-      TooltipModule.forRoot(),
-      ToastModule.forRoot(),
-      AlertModule.forRoot(),
-      RouterTestingModule,
-      HttpClientTestingModule
-    ],
-    declarations: [
-      RbdListComponent,
-      RbdDetailsComponent,
-      RbdSnapshotListComponent,
-      RbdConfigurationListComponent
-    ],
-    providers: [TaskListService, i18nProviders]
-  });
+  configureTestBed(testBedConfiguration);
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RbdListComponent);
@@ -196,170 +198,6 @@ describe('RbdListComponent', () => {
       expectImageTasks(component.images[2], 'Flattening');
     });
   });
-
-  describe('show action buttons and drop down actions depending on permissions', () => {
-    let tableActions: TableActionsComponent;
-    let empty;
-    let single;
-    let permissionHelper: PermissionHelper;
-    const fn = () => tableActions.getCurrentButton().name;
-
-    const getTableActionComponent = (): TableActionsComponent => {
-      fixture.detectChanges();
-      return fixture.debugElement.query(By.directive(TableActionsComponent)).componentInstance;
-    };
-
-    beforeEach(() => {
-      permissionHelper = new PermissionHelper(component.permission, () =>
-        getTableActionComponent()
-      );
-      single = ActionLabels.EDIT;
-      empty = ActionLabels.CREATE;
-    });
-
-    describe('with all', () => {
-      beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(true, true, true);
-      });
-
-      it(`shows 'Edit' for single selection else 'Add' as main action`, () =>
-        permissionHelper.testScenarios(fn, empty, single));
-
-      it('shows all actions', () => {
-        expect(tableActions.tableActions.length).toBe(6);
-        expect(tableActions.tableActions).toEqual(component.tableActions);
-      });
-    });
-
-    describe('with read, create and update', () => {
-      beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(true, true, false);
-      });
-
-      it(`shows 'Edit' for single selection else 'Add' as main action`, () =>
-        permissionHelper.testScenarios(fn, empty, single));
-
-      it(`shows all actions except for 'Delete' and 'Move'`, () => {
-        expect(tableActions.tableActions.length).toBe(4);
-        component.tableActions.pop();
-        component.tableActions.pop();
-        expect(tableActions.tableActions).toEqual(component.tableActions);
-      });
-    });
-
-    describe('with read, create and delete', () => {
-      beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(true, false, true);
-      });
-
-      it(`shows 'Copy' for single selection else 'Add' as main action`, () => {
-        single = 'Copy';
-        permissionHelper.testScenarios(fn, empty, single);
-      });
-
-      it(`shows 'Add', 'Copy', 'Delete' and 'Move' action`, () => {
-        expect(tableActions.tableActions.length).toBe(4);
-        expect(tableActions.tableActions).toEqual([
-          component.tableActions[0],
-          component.tableActions[2],
-          component.tableActions[4],
-          component.tableActions[5]
-        ]);
-      });
-    });
-
-    describe('with read, edit and delete', () => {
-      beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(false, true, true);
-      });
-
-      it(`shows always 'Edit' as main action`, () => {
-        empty = 'Edit';
-        permissionHelper.testScenarios(fn, empty, single);
-      });
-
-      it(`shows 'Edit', 'Flatten', 'Delete' and 'Move' action`, () => {
-        expect(tableActions.tableActions.length).toBe(4);
-        expect(tableActions.tableActions).toEqual([
-          component.tableActions[1],
-          component.tableActions[3],
-          component.tableActions[4],
-          component.tableActions[5]
-        ]);
-      });
-    });
-
-    describe('with read and create', () => {
-      beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(true, false, false);
-      });
-
-      it(`shows 'Copy' for single selection else 'Add' as main action`, () => {
-        single = 'Copy';
-        permissionHelper.testScenarios(fn, empty, single);
-      });
-
-      it(`shows 'Copy' and 'Add' actions`, () => {
-        expect(tableActions.tableActions.length).toBe(2);
-        expect(tableActions.tableActions).toEqual([
-          component.tableActions[0],
-          component.tableActions[2]
-        ]);
-      });
-    });
-
-    describe('with read and edit', () => {
-      beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(false, true, false);
-      });
-
-      it(`shows always 'Edit' as main action`, () => {
-        empty = 'Edit';
-        permissionHelper.testScenarios(fn, empty, single);
-      });
-
-      it(`shows 'Edit' and 'Flatten' actions`, () => {
-        expect(tableActions.tableActions.length).toBe(2);
-        expect(tableActions.tableActions).toEqual([
-          component.tableActions[1],
-          component.tableActions[3]
-        ]);
-      });
-    });
-
-    describe('with read and delete', () => {
-      beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(false, false, true);
-      });
-
-      it(`shows always 'Delete' as main action`, () => {
-        single = 'Delete';
-        empty = 'Delete';
-        permissionHelper.testScenarios(fn, empty, single);
-      });
-
-      it(`shows 'Delete' and 'Move' actions`, () => {
-        expect(tableActions.tableActions.length).toBe(2);
-        expect(tableActions.tableActions).toEqual([
-          component.tableActions[4],
-          component.tableActions[5]
-        ]);
-      });
-    });
-
-    describe('with only read', () => {
-      beforeEach(() => {
-        tableActions = permissionHelper.setPermissionsAndGetActions(false, false, false);
-      });
-
-      it('shows no main action', () => {
-        permissionHelper.testScenarios(() => tableActions.getCurrentButton(), undefined, undefined);
-      });
-
-      it('shows no actions', () => {
-        expect(tableActions.tableActions.length).toBe(0);
-        expect(tableActions.tableActions).toEqual([]);
-      });
-    });
-  });
 });
+
+testTableActions(testBedConfiguration, RbdListComponent);

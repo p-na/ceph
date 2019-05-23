@@ -172,8 +172,10 @@ describe('OsdListComponent', () => {
 
   describe('show table actions as defined', () => {
     let tableActions: TableActionsComponent;
-    let scenario: { fn; empty; single };
+    let empty;
+    let single;
     let permissionHelper: PermissionHelper;
+    const fn = () => tableActions.getCurrentButton().name;
 
     const getTableActionComponent = () => {
       fixture.detectChanges();
@@ -184,15 +186,12 @@ describe('OsdListComponent', () => {
       permissionHelper = new PermissionHelper(component.permissions.osd, () =>
         getTableActionComponent()
       );
-      scenario = {
-        fn: () => tableActions.getCurrentButton().name,
-        single: 'Scrub',
-        empty: 'Scrub'
-      };
+      single = 'Scrub';
+      empty = 'Scrub';
       tableActions = permissionHelper.setPermissionsAndGetActions(true, true, true);
     });
 
-    it('shows action button', () => permissionHelper.testScenarios(scenario));
+    it('shows action button', () => permissionHelper.testScenarios(fn, empty, single));
 
     it('shows all actions', () => {
       expect(tableActions.tableActions.length).toBe(9);

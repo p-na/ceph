@@ -39,8 +39,10 @@ describe('RgwUserListComponent', () => {
 
   describe('show action buttons and drop down actions depending on permissions', () => {
     let tableActions: TableActionsComponent;
-    let scenario: { fn; empty; single };
+    let single;
+    let empty;
     let permissionHelper: PermissionHelper;
+    const fn = () => tableActions.getCurrentButton().name;
 
     const getTableActionComponent = (): TableActionsComponent => {
       fixture.detectChanges();
@@ -51,11 +53,8 @@ describe('RgwUserListComponent', () => {
       permissionHelper = new PermissionHelper(component.permission, () =>
         getTableActionComponent()
       );
-      scenario = {
-        fn: () => tableActions.getCurrentButton().name,
-        single: ActionLabels.EDIT,
-        empty: ActionLabels.CREATE
-      };
+      single = ActionLabels.EDIT;
+      empty = ActionLabels.CREATE;
     });
 
     describe('with all', () => {
@@ -64,7 +63,7 @@ describe('RgwUserListComponent', () => {
       });
 
       it(`shows 'Edit' for single selection else 'Add' as main action`, () =>
-        permissionHelper.testScenarios(scenario));
+        permissionHelper.testScenarios(fn, empty, single));
 
       it('shows all actions', () => {
         expect(tableActions.tableActions.length).toBe(3);
@@ -78,7 +77,7 @@ describe('RgwUserListComponent', () => {
       });
 
       it(`shows 'Edit' for single selection else 'Add' as main action`, () =>
-        permissionHelper.testScenarios(scenario));
+        permissionHelper.testScenarios(fn, empty, single));
 
       it(`shows 'Add' and 'Edit' action`, () => {
         expect(tableActions.tableActions.length).toBe(2);
@@ -93,8 +92,8 @@ describe('RgwUserListComponent', () => {
       });
 
       it(`shows 'Delete' for single selection else 'Add' as main action`, () => {
-        scenario.single = 'Delete';
-        permissionHelper.testScenarios(scenario);
+        single = 'Delete';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Add' and 'Delete' action`, () => {
@@ -112,8 +111,8 @@ describe('RgwUserListComponent', () => {
       });
 
       it(`shows always 'Edit' as main action`, () => {
-        scenario.empty = ActionLabels.EDIT;
-        permissionHelper.testScenarios(scenario);
+        empty = ActionLabels.EDIT;
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Edit' and 'Delete' action`, () => {
@@ -131,8 +130,8 @@ describe('RgwUserListComponent', () => {
       });
 
       it(`shows always 'Add' as main action`, () => {
-        scenario.single = ActionLabels.CREATE;
-        permissionHelper.testScenarios(scenario);
+        single = ActionLabels.CREATE;
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows only 'Add' action`, () => {
@@ -147,8 +146,8 @@ describe('RgwUserListComponent', () => {
       });
 
       it(`shows always 'Edit' as main action`, () => {
-        scenario.empty = ActionLabels.EDIT;
-        permissionHelper.testScenarios(scenario);
+        empty = ActionLabels.EDIT;
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows only 'Edit' action`, () => {
@@ -163,9 +162,9 @@ describe('RgwUserListComponent', () => {
       });
 
       it(`shows always 'Delete' as main action`, () => {
-        scenario.single = 'Delete';
-        scenario.empty = 'Delete';
-        permissionHelper.testScenarios(scenario);
+        single = 'Delete';
+        empty = 'Delete';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows only 'Delete' action`, () => {
@@ -180,11 +179,11 @@ describe('RgwUserListComponent', () => {
       });
 
       it('shows no main action', () => {
-        permissionHelper.testScenarios({
-          fn: () => tableActions.getCurrentButton(),
-          single: undefined,
-          empty: undefined
-        });
+        permissionHelper.testScenarios(
+          () => tableActions.getCurrentButton(),
+          undefined,
+          undefined
+        );
       });
 
       it('shows no actions', () => {

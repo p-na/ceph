@@ -175,8 +175,10 @@ describe('IscsiTargetListComponent', () => {
 
   describe('show action buttons and drop down actions depending on permissions', () => {
     let tableActions: TableActionsComponent;
-    let scenario: { fn; empty; single };
     let permissionHelper: PermissionHelper;
+    let single;
+    let empty;
+    const fn = () => tableActions.getCurrentButton().name;
 
     const getTableActionComponent = (): TableActionsComponent => {
       fixture.detectChanges();
@@ -187,11 +189,8 @@ describe('IscsiTargetListComponent', () => {
       permissionHelper = new PermissionHelper(component.permissions.iscsi, () =>
         getTableActionComponent()
       );
-      scenario = {
-        fn: () => tableActions.getCurrentButton().name,
-        single: 'Edit',
-        empty: 'Add'
-      };
+      single = 'Edit';
+      empty = 'Add';
     });
 
     describe('with all', () => {
@@ -200,7 +199,7 @@ describe('IscsiTargetListComponent', () => {
       });
 
       it(`shows 'Edit' for single selection else 'Add' as main action`, () => {
-        permissionHelper.testScenarios(scenario);
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it('shows all actions', () => {
@@ -212,11 +211,11 @@ describe('IscsiTargetListComponent', () => {
     describe('with read, create and update', () => {
       beforeEach(() => {
         tableActions = permissionHelper.setPermissionsAndGetActions(true, true, false);
-        scenario.single = 'Edit';
+        single = 'Edit';
       });
 
       it(`should always show 'Edit'`, () => {
-        permissionHelper.testScenarios(scenario);
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows all actions except for 'Delete'`, () => {
@@ -232,8 +231,8 @@ describe('IscsiTargetListComponent', () => {
       });
 
       it(`shows 'Delete' for single selection else 'Add' as main action`, () => {
-        scenario.single = 'Delete';
-        permissionHelper.testScenarios(scenario);
+        single = 'Delete';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Add' and 'Delete' actions`, () => {
@@ -251,8 +250,8 @@ describe('IscsiTargetListComponent', () => {
       });
 
       it(`shows always 'Edit' as main action`, () => {
-        scenario.empty = 'Edit';
-        permissionHelper.testScenarios(scenario);
+        empty = 'Edit';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Edit' and 'Delete' actions`, () => {
@@ -270,8 +269,8 @@ describe('IscsiTargetListComponent', () => {
       });
 
       it(`shows 'Add' for single selection and 'Add' as main action`, () => {
-        scenario.single = 'Add';
-        permissionHelper.testScenarios(scenario);
+        single = 'Add';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Add' actions`, () => {
@@ -297,9 +296,9 @@ describe('IscsiTargetListComponent', () => {
       });
 
       it(`shows always 'Delete' as main action`, () => {
-        scenario.single = 'Delete';
-        scenario.empty = 'Delete';
-        permissionHelper.testScenarios(scenario);
+        single = 'Delete';
+        empty = 'Delete';
+        permissionHelper.testScenarios(fn, empty, single);
       });
 
       it(`shows 'Delete' actions`, () => {
@@ -314,11 +313,11 @@ describe('IscsiTargetListComponent', () => {
       });
 
       it('shows no main action', () => {
-        permissionHelper.testScenarios({
-          fn: () => tableActions.getCurrentButton(),
-          single: undefined,
-          empty: undefined
-        });
+        permissionHelper.testScenarios(
+          () => tableActions.getCurrentButton(),
+          undefined,
+          undefined
+        );
       });
 
       it('shows no actions', () => {

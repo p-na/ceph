@@ -52,7 +52,7 @@ describe('MgrModuleListComponent', () => {
 
   describe('show action buttons and drop down actions depending on permissions', () => {
     let tableActions: TableActionsComponent;
-    let scenario: { fn; empty; single };
+    let fn, empty, single;
     let permissionHelper: PermissionHelper;
 
     const getTableActionComponent = (): TableActionsComponent => {
@@ -64,11 +64,9 @@ describe('MgrModuleListComponent', () => {
       permissionHelper = new PermissionHelper(component.permission, () =>
         getTableActionComponent()
       );
-      scenario = {
-        fn: () => tableActions.getCurrentButton().name,
-        single: 'Edit',
-        empty: 'Edit'
-      };
+      fn = () => tableActions.getCurrentButton().name;
+      single = 'Edit';
+      empty = 'Edit';
     });
 
     describe('with read and update', () => {
@@ -76,7 +74,7 @@ describe('MgrModuleListComponent', () => {
         tableActions = permissionHelper.setPermissionsAndGetActions(false, true, false);
       });
 
-      it('shows action button', () => permissionHelper.testScenarios(scenario));
+      it('shows action button', () => permissionHelper.testScenarios(fn, empty, single));
 
       it('shows all actions', () => {
         expect(tableActions.tableActions.length).toBe(3);
@@ -90,11 +88,7 @@ describe('MgrModuleListComponent', () => {
       });
 
       it('shows no main action', () => {
-        permissionHelper.testScenarios({
-          fn: () => tableActions.getCurrentButton(),
-          single: undefined,
-          empty: undefined
-        });
+        permissionHelper.testScenarios(() => tableActions.getCurrentButton(), undefined, undefined);
       });
 
       it('shows no actions', () => {

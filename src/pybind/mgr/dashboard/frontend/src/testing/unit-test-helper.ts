@@ -61,19 +61,14 @@ export class PermissionHelper {
     return this.tableActions;
   }
 
-  testScenarios({
-    fn,
-    empty,
-    single,
-    singleExecuting,
-    multiple
-  }: {
-    fn: () => any;
-    empty: any;
-    single: any;
-    singleExecuting?: any; // uses 'single' if not defined
-    multiple?: any; // uses 'empty' if not defined
-  }) {
+  /**
+   * @param fn
+   * @param empty
+   * @param single
+   * @param singleExecuting Uses 'single' if not defined
+   * @param multiple Uses 'empty' if not defined
+   */
+  testScenarios(fn: () => any, empty: any, single: any, singleExecuting?: any, multiple?: any) {
     this.testScenario(
       // 'multiple selections'
       [{}, {}],

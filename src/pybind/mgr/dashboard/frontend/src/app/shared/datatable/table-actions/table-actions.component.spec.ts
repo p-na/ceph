@@ -17,8 +17,8 @@ describe('TableActionsComponent', () => {
   let unprotectAction: CdTableAction;
   let deleteAction: CdTableAction;
   let copyAction: CdTableAction;
-  let scenario;
   let permissionHelper: PermissionHelper;
+  let fn, multiple, singleExecuting, single, empty;
 
   const setUpTableActions = () => {
     component.tableActions = [
@@ -127,126 +127,123 @@ describe('TableActionsComponent', () => {
   });
 
   describe('disableSelectionAction', () => {
+
     beforeEach(() => {
-      scenario = {
-        fn: () => null,
-        multiple: false,
-        singleExecuting: false,
-        single: false,
-        empty: false
-      };
+      fn = () => null;
+      multiple = false;
+      singleExecuting = false;
+      single = false;
+      empty = false;
     });
 
     it('tests disabling addAction', () => {
-      scenario.fn = () => component.disableSelectionAction(addAction);
-      permissionHelper.testScenarios(scenario);
+      fn = () => component.disableSelectionAction(addAction);
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
 
     it('tests disabling editAction', () => {
-      scenario.fn = () => component.disableSelectionAction(editAction);
-      scenario.multiple = true;
-      scenario.empty = true;
-      scenario.singleExecuting = true;
-      permissionHelper.testScenarios(scenario);
+      fn = () => component.disableSelectionAction(editAction);
+      multiple = true;
+      empty = true;
+      singleExecuting = true;
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
 
     it('tests disabling deleteAction', () => {
-      scenario.fn = () => component.disableSelectionAction(deleteAction);
-      scenario.multiple = false;
-      scenario.empty = true;
-      scenario.singleExecuting = true;
-      permissionHelper.testScenarios(scenario);
+      fn = () => component.disableSelectionAction(deleteAction);
+      multiple = false;
+      empty = true;
+      singleExecuting = true;
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
 
     it('tests disabling copyAction', () => {
-      scenario.fn = () => component.disableSelectionAction(copyAction);
-      scenario.multiple = true;
-      scenario.empty = true;
-      scenario.singleExecuting = true;
-      permissionHelper.testScenarios(scenario);
+      fn = () => component.disableSelectionAction(copyAction);
+      multiple = true;
+      empty = true;
+      singleExecuting = true;
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
   });
 
   describe('get current button', () => {
     const hiddenScenario = () => {
-      scenario.multiple = undefined;
-      scenario.empty = undefined;
-      scenario.singleExecuting = undefined;
-      scenario.single = undefined;
+      multiple = undefined;
+      empty = undefined;
+      singleExecuting = undefined;
+      single = undefined;
     };
 
     const setScenario = (defaultAction, selectionAction) => {
-      scenario.single = selectionAction;
-      scenario.singleExecuting = selectionAction;
-      scenario.multiple = defaultAction;
-      scenario.empty = defaultAction;
+      single = selectionAction;
+      singleExecuting = selectionAction;
+      multiple = defaultAction;
+      empty = defaultAction;
     };
 
     beforeEach(() => {
-      scenario = {
-        fn: () => component.getCurrentButton(),
-        singleExecuting: copyAction,
-        single: copyAction,
-        empty: addAction
-      };
+      fn = () => component.getCurrentButton();
+      singleExecuting = copyAction;
+      single = copyAction;
+      empty = addAction;
     });
 
     it('gets add for no, edit for single and delete for multiple selections', () => {
       setScenario(addAction, editAction);
-      scenario.multiple = deleteAction;
+      multiple = deleteAction;
       permissionHelper.setPermissionsAndGetActions(true, true, true);
-      permissionHelper.testScenarios(scenario);
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
 
     it('gets add action except for selections where it shows edit action', () => {
       setScenario(addAction, editAction);
       permissionHelper.setPermissionsAndGetActions(true, true, false);
-      permissionHelper.testScenarios(scenario);
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
 
     it('gets add for no, copy for single and delete for multiple selections', () => {
       setScenario(addAction, copyAction);
-      scenario.multiple = deleteAction;
+      multiple = deleteAction;
       permissionHelper.setPermissionsAndGetActions(true, false, true);
-      permissionHelper.testScenarios(scenario);
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
 
     it('gets add action except for selections where it shows copy action', () => {
       setScenario(addAction, copyAction);
       permissionHelper.setPermissionsAndGetActions(true , false, false);
-      permissionHelper.testScenarios(scenario);
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
 
     it('should always get edit action except delete for multiple items', () => {
       setScenario(editAction, editAction);
-      scenario.multiple = deleteAction;
+      multiple = deleteAction;
       permissionHelper.setPermissionsAndGetActions(false, true, true);
-      permissionHelper.testScenarios(scenario);
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
 
     it('should always get edit action', () => {
       setScenario(editAction, editAction);
       permissionHelper.setPermissionsAndGetActions(false, true, false);
-      permissionHelper.testScenarios(scenario);
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
 
     it('should always get delete action', () => {
       setScenario(deleteAction, deleteAction);
       permissionHelper.setPermissionsAndGetActions(false, false, true);
-      permissionHelper.testScenarios(scenario);
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
 
     it('should not get any button with no permissions', () => {
       hiddenScenario();
       permissionHelper.setPermissionsAndGetActions(false, false, false);
-      permissionHelper.testScenarios(scenario);
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
 
     it('should not get any button if only a drop down should be shown', () => {
       hiddenScenario();
       component.onlyDropDown = 'Drop down label';
       permissionHelper.setPermissionsAndGetActions(true, true, true);
-      permissionHelper.testScenarios(scenario);
+      permissionHelper.testScenarios(fn, empty, single, singleExecuting, multiple);
     });
   });
 

@@ -6,7 +6,9 @@ import { By } from '@angular/platform-browser';
 import { I18n } from '@ngx-translate/i18n-polyfill';
 import * as _ from 'lodash';
 
-import { ActionLabels } from "../app/shared/constants/app.constants";
+import { BehaviorSubject } from 'rxjs';
+import { RbdService } from '../app/shared/api/rbd.service';
+import { ActionLabels } from '../app/shared/constants/app.constants';
 import { TableActionsComponent } from '../app/shared/datatable/table-actions/table-actions.component';
 import { CdFormGroup } from '../app/shared/forms/cd-form-group';
 import { Permission } from '../app/shared/models/permissions';
@@ -15,15 +17,11 @@ import {
   PrometheusNotification,
   PrometheusNotificationAlert
 } from '../app/shared/models/prometheus-alerts';
+import { SummaryService } from '../app/shared/services/summary.service';
 import { _DEV_ } from '../unit-test-configuration';
-import { RbdListComponent } from "../app/ceph/block/rbd-list/rbd-list.component";
-import { SummaryService } from "../app/shared/services/summary.service";
-import { RbdService } from "../app/shared/api/rbd.service";
-import { BehaviorSubject } from "rxjs";
-
 
 export function configureTestBed(configuration, useOldMethod?) {
-  if (_DEV_ && !useOldMethod) {
+  if (_DEV_ && !useOldMethod && false) {
     const resetTestingModule = TestBed.resetTestingModule;
     beforeAll((done) =>
       (async () => {
@@ -268,8 +266,8 @@ export { i18nProviders };
 
 export function testTableActions(testBedConf, componentClass) {
   describe('show action buttons and drop down actions depending on permissions', () => {
-    let fixture: ComponentFixture<RbdListComponent>;
-    let component: RbdListComponent;
+    let fixture: ComponentFixture<any>;
+    let component: any;
     let summaryService: SummaryService;
     let rbdService: RbdService;
 

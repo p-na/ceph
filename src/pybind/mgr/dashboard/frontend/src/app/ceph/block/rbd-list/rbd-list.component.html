@@ -10,10 +10,12 @@
           forceIdentifier="true"
           selectionType="single"
           (updateSelection)="updateSelection($event)">
-  <cd-table-actions class="table-actions"
-                    [permission]="permission"
-                    [selection]="selection"
-                    [tableActions]="tableActions">
+  <cd-table-actions
+    id="main-table-actions"
+    class="table-actions"
+    [permission]="permission"
+    [selection]="selection"
+    [tableActions]="tableActions">
   </cd-table-actions>
   <cd-rbd-details cdTableDetail
                   [selection]="selection">

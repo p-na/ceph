@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { NfsPage } from './nfs.po';
 
 describe('Nfs page', () => {
@@ -18,7 +18,7 @@ describe('Nfs page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('NFS');
+      expect(PageHelper.getBreadcrumbText()).toEqual('NFS');
     });
   });
 });

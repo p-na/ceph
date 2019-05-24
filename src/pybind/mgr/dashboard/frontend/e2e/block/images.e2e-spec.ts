@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { ImagesPage } from './images.po';
 
 describe('Images page', () => {
@@ -18,17 +18,17 @@ describe('Images page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('Images');
+      expect(PageHelper.getBreadcrumbText()).toEqual('Images');
     });
 
     it('should show three tabs', () => {
-      expect(Helper.getTabsCount()).toEqual(3);
+      expect(PageHelper.getTabsCount()).toEqual(3);
     });
 
     it('should show text for all tabs', () => {
-      expect(Helper.getTabText(0)).toEqual('Images');
-      expect(Helper.getTabText(1)).toEqual('Trash');
-      expect(Helper.getTabText(2)).toEqual('Overall Performance');
+      expect(PageHelper.getTabText(0)).toEqual('Images');
+      expect(PageHelper.getTabText(1)).toEqual('Trash');
+      expect(PageHelper.getTabText(2)).toEqual('Overall Performance');
     });
   });
 });

@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { ManagerModulesPage } from './mgr-modules.po';
 
 describe('Manager modules page', () => {
@@ -18,7 +18,7 @@ describe('Manager modules page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('Manager modules');
+      expect(PageHelper.getBreadcrumbText()).toEqual('Manager modules');
     });
   });
 });

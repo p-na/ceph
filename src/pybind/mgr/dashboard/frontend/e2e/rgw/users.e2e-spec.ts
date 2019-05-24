@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { UsersPage } from './users.po';
 
 describe('RGW users page', () => {
@@ -18,7 +18,7 @@ describe('RGW users page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('Users');
+      expect(PageHelper.getBreadcrumbText()).toEqual('Users');
     });
   });
 });

@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { DaemonsPage } from './daemons.po';
 
 describe('RGW daemons page', () => {
@@ -18,19 +18,19 @@ describe('RGW daemons page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('Daemons');
+      expect(PageHelper.getBreadcrumbText()).toEqual('Daemons');
     });
 
     it('should show two tabs', () => {
-      expect(Helper.getTabsCount()).toEqual(2);
+      expect(PageHelper.getTabsCount()).toEqual(2);
     });
 
     it('should show daemons list tab at first', () => {
-      expect(Helper.getTabText(0)).toEqual('Daemons List');
+      expect(PageHelper.getTabText(0)).toEqual('Daemons List');
     });
 
     it('should show overall performance as a second tab', () => {
-      expect(Helper.getTabText(1)).toEqual('Overall Performance');
+      expect(PageHelper.getTabText(1)).toEqual('Overall Performance');
     });
   });
 });

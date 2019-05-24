@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { BucketsPage } from './buckets.po';
 
 describe('RGW buckets page', () => {
@@ -18,7 +18,7 @@ describe('RGW buckets page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('Buckets');
+      expect(PageHelper.getBreadcrumbText()).toEqual('Buckets');
     });
   });
 });

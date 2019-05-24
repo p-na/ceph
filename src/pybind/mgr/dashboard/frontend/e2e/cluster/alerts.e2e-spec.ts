@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { AlertsPage } from './alerts.po';
 
 describe('Alerts page', () => {
@@ -18,7 +18,7 @@ describe('Alerts page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('Alerts');
+      expect(PageHelper.getBreadcrumbText()).toEqual('Alerts');
     });
   });
 });

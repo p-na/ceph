@@ -1,7 +1,5 @@
-import { browser } from 'protractor';
+import { PageHelper } from '../helper.po';
 
-export class MonitorsPage {
-  navigateTo() {
-    return browser.get('/#/monitor');
-  }
+export class MonitorsPage extends PageHelper {
+  pages = { index: '/#/monitor' };
 }

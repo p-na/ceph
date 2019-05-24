@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { MonitorsPage } from './monitors.po';
 
 describe('Monitors page', () => {
@@ -18,7 +18,7 @@ describe('Monitors page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('Monitors');
+      expect(PageHelper.getBreadcrumbText()).toEqual('Monitors');
     });
   });
 });

@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { MirroringPage } from './mirroring.po';
 
 describe('Mirroring page', () => {
@@ -18,17 +18,17 @@ describe('Mirroring page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('Mirroring');
+      expect(PageHelper.getBreadcrumbText()).toEqual('Mirroring');
     });
 
     it('should show three tabs', () => {
-      expect(Helper.getTabsCount()).toEqual(3);
+      expect(PageHelper.getTabsCount()).toEqual(3);
     });
 
     it('should show text for all tabs', () => {
-      expect(Helper.getTabText(0)).toEqual('Issues');
-      expect(Helper.getTabText(1)).toEqual('Syncing');
-      expect(Helper.getTabText(2)).toEqual('Ready');
+      expect(PageHelper.getTabText(0)).toEqual('Issues');
+      expect(PageHelper.getTabText(1)).toEqual('Syncing');
+      expect(PageHelper.getTabText(2)).toEqual('Ready');
     });
   });
 });

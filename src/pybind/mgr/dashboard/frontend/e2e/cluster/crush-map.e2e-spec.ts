@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { CrushMapPage } from './crush-map.po';
 
 describe('CRUSH map page', () => {
@@ -18,7 +18,7 @@ describe('CRUSH map page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('CRUSH map');
+      expect(PageHelper.getBreadcrumbText()).toEqual('CRUSH map');
     });
   });
 });

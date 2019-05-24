@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { ConfigurationPage } from './configuration.po';
 
 describe('Configuration page', () => {
@@ -18,7 +18,7 @@ describe('Configuration page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('Configuration');
+      expect(PageHelper.getBreadcrumbText()).toEqual('Configuration');
     });
   });
 });

@@ -1,7 +1,5 @@
-import { browser } from 'protractor';
+import { PageHelper } from '../helper.po';
 
-export class UsersPage {
-  navigateTo() {
-    return browser.get('/#/rgw/user');
-  }
+export class UsersPage extends PageHelper {
+  pages = { index: '/#/rgw/user' };
 }

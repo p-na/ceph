@@ -1,7 +1,5 @@
-import { browser } from 'protractor';
+import { PageHelper } from '../helper.po';
 
-export class FilesystemsPage {
-  navigateTo() {
-    return browser.get('/#/cephfs');
-  }
+export class FilesystemsPage extends PageHelper {
+  pages = { index: '/#/cephfs' };
 }

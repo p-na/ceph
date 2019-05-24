@@ -1,12 +1,10 @@
-import { $, browser, by, element } from 'protractor';
-import { Helper } from '../helper.po';
-import { PoolsPage } from './pools.po';
+import { Helper, PageHelper } from '../helper.po';
 
 describe('Pools page', () => {
-  // let page: PoolsPage;
+  let helper: Helper;
 
   beforeAll(() => {
-    // page = new PoolsPage();
+    helper = new Helper();
   });
 
   afterEach(() => {
@@ -15,42 +13,35 @@ describe('Pools page', () => {
 
   describe('breadcrumb and tab tests', () => {
     beforeAll(() => {
-      PoolsPage.navigateTo();
+      helper.pools.navigateTo();
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('Pools');
+      expect(PageHelper.getBreadcrumbText()).toEqual('Pools');
     });
 
     it('should show two tabs', () => {
-      expect(Helper.getTabsCount()).toEqual(2);
+      expect(PageHelper.getTabsCount()).toEqual(2);
     });
 
     it('should show pools list tab at first', () => {
-      expect(Helper.getTabText(0)).toEqual('Pools List');
+      expect(PageHelper.getTabText(0)).toEqual('Pools List');
     });
 
     it('should show overall performance as a second tab', () => {
-      expect(Helper.getTabText(1)).toEqual('Overall Performance');
+      expect(PageHelper.getTabText(1)).toEqual('Overall Performance');
     });
+  });
+
+  describe('tests pool creation and deletion', () => {
+    const poolName = 'foobar';
 
     it('should create a pool', () => {
-      PoolsPage.naviateToPoolCreation();
-      expect($('.panel-title').getText()).toBe('Create Pool');
+      helper.pools.createPool(poolName);
+    });
 
-      const inputName = $('input[name=name]');
-      inputName.sendKeys('foobar');
-      expect(inputName.getAttribute('value')).toBe('foobar');
-
-      const inputType = element(by.cssContainingText('select[name=poolType] option', 'replicated'));
-      console.log(inputType.getText());
-      inputType.click(); // select
-      expect(inputType.element(by.css('option:checked')).getText()).toBe('replicated');
-
-      // element(by.cssContainingText('select[name=poolType]', 'replicated')).click();
-      // $('form[name=form]').submit();
-      // element(by.name('form')).submit();
-      // browser.getCurrentUrl().then(url => expect(url).toBe('/#/pool'));
+    it('should delete a pool', () => {
+      helper.pools.deletePool(poolName);
     });
   });
 });

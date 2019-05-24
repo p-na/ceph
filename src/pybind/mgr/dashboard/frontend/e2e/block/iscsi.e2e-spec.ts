@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { IscsiPage } from './iscsi.po';
 
 describe('Iscsi Page', () => {
@@ -18,7 +18,7 @@ describe('Iscsi Page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('Overview');
+      expect(PageHelper.getBreadcrumbText()).toEqual('Overview');
     });
   });
 });

@@ -1,4 +1,4 @@
-import { Helper } from '../helper.po';
+import { Helper, PageHelper } from '../helper.po';
 import { HostsPage } from './hosts.po';
 
 describe('Hosts page', () => {
@@ -18,19 +18,19 @@ describe('Hosts page', () => {
     });
 
     it('should open and show breadcrumb', () => {
-      expect(Helper.getBreadcrumbText()).toEqual('Hosts');
+      expect(PageHelper.getBreadcrumbText()).toEqual('Hosts');
     });
 
     it('should show two tabs', () => {
-      expect(Helper.getTabsCount()).toEqual(2);
+      expect(PageHelper.getTabsCount()).toEqual(2);
     });
 
     it('should show hosts list tab at first', () => {
-      expect(Helper.getTabText(0)).toEqual('Hosts List');
+      expect(PageHelper.getTabText(0)).toEqual('Hosts List');
     });
 
     it('should show overall performance as a second tab', () => {
-      expect(Helper.getTabText(1)).toEqual('Overall Performance');
+      expect(PageHelper.getTabText(1)).toEqual('Overall Performance');
     });
   });
 });

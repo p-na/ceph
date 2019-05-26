@@ -1,9 +1,9 @@
 import { $, by, element } from 'protractor';
-import { PageHelper } from '../helper.po';
+import { PageHelper } from '../page-helper.po';
 
 export class PoolPageHelper extends PageHelper {
   pages = {
-    index: '/#/pool/',
+    index: '/#/pool',
     create: '/#/pool/create'
   };
 

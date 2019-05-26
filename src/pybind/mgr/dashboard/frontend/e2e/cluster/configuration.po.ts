@@ -1,4 +1,4 @@
-import { PageHelper } from '../helper.po';
+import { PageHelper } from '../page-helper.po';
 
 export class ConfigurationPage extends PageHelper {
   pages = { index: '/#/configuration' };

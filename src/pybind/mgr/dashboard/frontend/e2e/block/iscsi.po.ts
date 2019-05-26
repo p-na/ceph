@@ -1,5 +1,5 @@
-import { PageHelper } from '../helper.po';
+import { PageHelper } from '../page-helper.po';
 
 export class IscsiPage extends PageHelper {
-  pages = {index: '/#/block/iscsi'};
+  pages = { index: '/#/block/iscsi/overview' };
 }

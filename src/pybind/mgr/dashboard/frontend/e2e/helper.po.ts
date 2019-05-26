@@ -1,40 +1,6 @@
 import { $, $$, browser } from 'protractor';
 import { PoolPageHelper } from './pools/pools.po';
 
-interface Pages {
-  index: string;
-}
-
-export abstract class PageHelper {
-  pages: Pages;
-
-  static getBreadcrumbText() {
-    return $('.breadcrumb-item.active').getText();
-  }
-
-  static getTabText(idx) {
-    return $$('.nav.nav-tabs li')
-      .get(idx)
-      .getText();
-  }
-
-  static getTabsCount() {
-    return $$('.nav.nav-tabs li').count();
-  }
-
-  navigateTo(page = null) {
-    let result;
-    if (!page) {
-      result = browser.get(this.pages.index);
-    } else {
-      result = browser.get(this.pages[page]);
-    }
-    browser.waitForAngular();
-    browser.getCurrentUrl().then(url => expect(url.endsWith(this.pages[page])).toBe(true));
-    return result;
-  }
-}
-
 export class Helper {
   static EC = browser.ExpectedConditions;
   static TIMEOUT = 10000;

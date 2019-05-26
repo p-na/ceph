@@ -1,4 +1,5 @@
-import { Helper, PageHelper } from '../helper.po';
+import { Helper } from '../helper.po';
+import { PageHelper } from '../page-helper.po';
 import { UsersPage } from './users.po';
 
 describe('RGW users page', () => {

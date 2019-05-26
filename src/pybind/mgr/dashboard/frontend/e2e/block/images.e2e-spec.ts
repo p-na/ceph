@@ -1,4 +1,5 @@
-import { Helper, PageHelper } from '../helper.po';
+import { Helper } from '../helper.po';
+import { PageHelper } from '../page-helper.po';
 import { ImagesPage } from './images.po';
 
 describe('Images page', () => {

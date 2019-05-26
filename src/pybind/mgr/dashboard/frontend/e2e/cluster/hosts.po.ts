@@ -1,4 +1,4 @@
-import { PageHelper } from '../helper.po';
+import { PageHelper } from '../page-helper.po';
 
 export class HostsPage extends PageHelper {
   pages = { index: '/#/hosts' };

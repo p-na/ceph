@@ -1,8 +1,8 @@
 import { browser } from 'protractor';
-import { PageHelper } from '../helper.po';
+import { PageHelper } from '../page-helper.po';
 
 browser.ignoreSynchronization = true;
 
 export class LogsPage extends PageHelper {
-  pages: { index: '/#/logs' };
+  pages = { index: '/#/logs' };
 }

@@ -1,4 +1,5 @@
-import { Helper, PageHelper } from '../helper.po';
+import { Helper } from '../helper.po';
+import { PageHelper } from '../page-helper.po';
 import { ManagerModulesPage } from './mgr-modules.po';
 
 describe('Manager modules page', () => {

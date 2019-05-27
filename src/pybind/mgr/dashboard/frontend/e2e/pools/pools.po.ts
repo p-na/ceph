@@ -1,4 +1,4 @@
-import { $, by, element } from 'protractor';
+import { $, browser, by, element } from 'protractor';
 import { PageHelper } from '../page-helper.po';
 
 export class PoolPageHelper extends PageHelper {
@@ -22,13 +22,20 @@ export class PoolPageHelper extends PageHelper {
       expect(element(by.css('select[name=poolType] option:checked')).getText()).toBe(' replicated ');
       element(by.css('cd-submit-button')).click();
     }, () => console.log('failed'));
+    // TODO doesn't fail if pool already exists
   }
 
   deletePool(name) {
     console.log(`PoolPageHelper::deletePool name=${name}`);
     this.navigateTo();
 
-    const cell = element(by.cssContainingText('.datatable-body-cell-label', name));
-    console.log(cell);
+    const poolTableCell = element(by.cssContainingText('.datatable-body-cell-label', name));
+    poolTableCell.click();
+    $('.table-actions button.dropdown-toggle').click(); // open submenu
+    $('li.delete a').click();
+    const confirmation = $('#confirmation');
+    expect(confirmation).toBeTruthy();
+    confirmation.click();
+    element(by.cssContainingText('button', 'Delete Pool')).click();
   }
 }

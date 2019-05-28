@@ -37,12 +37,14 @@ describe('Pools page', () => {
   describe('tests pool creation and deletion', () => {
     const poolName = 'foobar';
 
-    it('should create a pool', () => {
-      helper.pools.createPool(poolName);
-    });
-
-    it('should delete a pool', () => {
-      helper.pools.deletePool(poolName);
+    it('should create and delete a pool', () => {
+      helper.pools.create(poolName).then(
+        (creationTime) => {
+          console.log(`creating a pool and verifying it exists took ${creationTime} milliseconds`);
+          helper.pools.delete(poolName).then((deletionTime) => {
+            console.log(`pool deleted and verified its deletion took ${deletionTime}`);
+          });
+        });
     });
   });
 });

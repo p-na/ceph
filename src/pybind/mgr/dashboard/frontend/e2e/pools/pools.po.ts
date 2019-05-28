@@ -1,4 +1,5 @@
 import { $, browser, by, element } from 'protractor';
+import { protractor } from 'protractor/built/ptor';
 import { PageHelper } from '../page-helper.po';
 
 export class PoolPageHelper extends PageHelper {
@@ -7,35 +8,47 @@ export class PoolPageHelper extends PageHelper {
     create: '/#/pool/create'
   };
 
-  createPool(name) {
-    this.navigateTo('create');
-    expect($('.panel-title').getText()).toBe('Create Pool');
+  create(name) {
+    return new Promise((resolve) => {
+      const start = (new Date).getTime();
+      this.navigateTo('create');
+      expect(PageHelper.getTitleText()).toBe('Create Pool');
 
-    const inputName = $('input[name=name]');
-    inputName.sendKeys(name);
-    expect(inputName.getAttribute('value')).toBe(name);
+      const inputName = $('input[name=name]');
+      inputName.sendKeys(name);
+      expect(inputName.getAttribute('value')).toBe(name);
 
-    const inputType = element(by.cssContainingText('select[name=poolType] option', 'replicated'));
-    inputType.click();
-    inputType.getText().then(text => {
-      console.log(`text is: ${text}`);
+      const inputType = element(by.cssContainingText('select[name=poolType] option', 'replicated'));
+      inputType.click();
       expect(element(by.css('select[name=poolType] option:checked')).getText()).toBe(' replicated ');
-      element(by.css('cd-submit-button')).click();
-    }, () => console.log('failed'));
-    // TODO doesn't fail if pool already exists
+
+      element(by.css('cd-submit-button')).click().then(() => {
+        browser.wait(() => {
+          return PoolPageHelper.getTableCell(name).isDisplayed().then(b => b, () => {});
+        }, 5000).then(() => {
+          resolve((new Date).getTime() - start);
+        });
+      });
+    });
   }
 
-  deletePool(name) {
-    console.log(`PoolPageHelper::deletePool name=${name}`);
-    this.navigateTo();
+  delete(name) {
+    return new Promise((resolve) => {
+      this.navigateTo();
 
-    const poolTableCell = element(by.cssContainingText('.datatable-body-cell-label', name));
-    poolTableCell.click();
-    $('.table-actions button.dropdown-toggle').click(); // open submenu
-    $('li.delete a').click();
-    const confirmation = $('#confirmation');
-    expect(confirmation).toBeTruthy();
-    confirmation.click();
-    element(by.cssContainingText('button', 'Delete Pool')).click();
+      const poolTableCell = PoolPageHelper.getTableCell(name);
+      browser.wait(poolTableCell.isPresent(), 5000, 'not present :(').then(() => {
+        poolTableCell.click();
+        $('.table-actions button.dropdown-toggle').click(); // Open submenu
+        $('li.delete a').click(); // Click Delete item
+        $('#confirmation').click(); // Check `Yes, I am sure` checkbox
+        element(by.cssContainingText('button', 'Delete Pool')).click();
+
+        this.navigateTo();
+        const EC = protractor.ExpectedConditions;
+        browser.wait(EC.presenceOf(PoolPageHelper.getTableCell(name)), 5000, 'Takes too long').catch(resolve);
+      });
+    });
   }
+
 }

@@ -1,5 +1,6 @@
 import { $, browser, by, element } from 'protractor';
 import { protractor } from 'protractor/built/ptor';
+import { Helper } from '../helper.po';
 import { PageHelper } from '../page-helper.po';
 
 export class PoolPageHelper extends PageHelper {
@@ -25,7 +26,7 @@ export class PoolPageHelper extends PageHelper {
       element(by.css('cd-submit-button')).click().then(() => {
         browser.wait(() => {
           return PoolPageHelper.getTableCell(name).isDisplayed().then(b => b, () => {});
-        }, 5000).then(() => {
+        }, Helper.TIMEOUT).then(() => {
           resolve((new Date).getTime() - start);
         });
       });
@@ -37,7 +38,7 @@ export class PoolPageHelper extends PageHelper {
       this.navigateTo();
 
       const poolTableCell = PoolPageHelper.getTableCell(name);
-      browser.wait(poolTableCell.isPresent(), 5000, 'not present :(').then(() => {
+      browser.wait(poolTableCell.isPresent(), Helper.TIMEOUT, 'not present :(').then(() => {
         poolTableCell.click();
         $('.table-actions button.dropdown-toggle').click(); // Open submenu
         $('li.delete a').click(); // Click Delete item
@@ -46,7 +47,7 @@ export class PoolPageHelper extends PageHelper {
 
         this.navigateTo();
         const EC = protractor.ExpectedConditions;
-        browser.wait(EC.presenceOf(PoolPageHelper.getTableCell(name)), 5000, 'Takes too long').catch(resolve);
+        browser.wait(EC.presenceOf(PoolPageHelper.getTableCell(name)), Helper.TIMEOUT, 'Takes too long').catch(resolve);
       });
     });
   }

@@ -3,7 +3,7 @@ import { PoolPageHelper } from './pools/pools.po';
 
 export class Helper {
   static EC = browser.ExpectedConditions;
-  static TIMEOUT = 10000;
+  static TIMEOUT = 30000;
 
   pools: PoolPageHelper;
 

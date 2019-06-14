@@ -8,7 +8,11 @@ export abstract class PageHelper {
   pages: Pages;
 
   static getBreadcrumbText() {
-    return $('.breadcrumb-item.active').getText();
+    let breadcrumb;
+    return browser.wait(() => {
+      breadcrumb = $('.breadcrumb-item.active');
+      return breadcrumb.isPresent();
+    }, 6000).then(() => breadcrumb.getText());
   }
 
   static getTabText(idx) {
@@ -18,7 +22,11 @@ export abstract class PageHelper {
   }
 
   static getTitleText() {
-    return $('.panel-title').getText();
+    let title;
+    return browser.wait(() => {
+      title = $('.panel-title');
+      return title.isPresent();
+    }).then(() => title.getText());
   }
 
   static getTabsCount() {
@@ -33,7 +41,7 @@ export abstract class PageHelper {
     page = page || 'index';
     const url = this.pages[page];
     return browser.get(url);
-      // .then(() => {
+    // .then(() => {
       // browser.getCurrentUrl().then(actualUrl => expect(actualUrl).toMatch(new RegExp(`${url}$`)));
     // });
   }

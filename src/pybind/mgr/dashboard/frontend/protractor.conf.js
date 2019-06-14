@@ -41,7 +41,7 @@ exports.config = {
     }],
 
   onPrepare() {
-    browser.manage().timeouts().implicitlyWait(360000);
+    // browser.manage().timeouts().implicitlyWait(0);
 
     require('ts-node').register({
       project: 'e2e/tsconfig.e2e.json'
@@ -58,6 +58,7 @@ exports.config = {
     browser.driver.findElement(by.css('input[type="submit"]')).click();
 
     return global.browser.getProcessedConfig().then(function(config) {
+      console.log(config);
       // Login takes some time, so wait until it's done.
       // For the test app's login, we know it's done when it redirects to
       // dashboard.

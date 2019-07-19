@@ -29,6 +29,8 @@ import { UserFormModel } from './user-form.model';
 export class UserFormComponent implements OnInit {
   @ViewChild('removeSelfUserReadUpdatePermissionTpl')
   removeSelfUserReadUpdatePermissionTpl: TemplateRef<any>;
+  @ViewChild('disableOwnUserTpl')
+  disableOwnUserTpl: TemplateRef<any>;
 
   modalRef: BsModalRef;
 
@@ -151,25 +153,70 @@ export class UserFormComponent implements OnInit {
     );
   }
 
-  editAction() {
-    if (this.isUserRemovingNeededRolePermissions()) {
-      const initialState = {
-        titleText: this.i18n('Update user'),
-        buttonText: this.i18n('Continue'),
-        bodyTpl: this.removeSelfUserReadUpdatePermissionTpl,
-        onSubmit: () => {
-          this.modalRef.hide();
-          this.doEditAction();
-        },
-        onCancel: () => {
-          this.userForm.setErrors({ cdSubmitButton: true });
-          this.userForm.get('roles').reset(this.userForm.get('roles').value);
-        }
-      };
-      this.modalRef = this.modalService.show(ConfirmationModalComponent, { initialState });
-    } else {
-      this.doEditAction();
+  private getUserUpdateDialogState(template: TemplateRef<any>, onSubmit: Function, onCancel: Function): {
+    titleText: string;
+    buttonText: string;
+    bodyTpl: TemplateRef<any>;
+    onSubmit: Function;
+    onCancel: Function;
+  } {
+    return {
+      titleText: this.i18n('Update user'),
+      buttonText: this.i18n('Continue'),
+      bodyTpl: template,
+      onSubmit: () => {
+        this.modalRef.hide();
+        onSubmit();
+      },
+      onCancel: () => {
+        this.userForm.setErrors({ cdSubmitButton: true }); // Reset user button
+        this.userForm.get('roles').reset(this.userForm.get('roles').value);
+        onCancel();
+      }
+    };
+  }
+
+  private async showRemovingOwnRoleDialog(): Promise<boolean> {
+    return new Promise((resolve) => {
+      const state = this.getUserUpdateDialogState(
+        this.removeSelfUserReadUpdatePermissionTpl,
+        () => resolve(true),
+        () => resolve(false),
+      );
+      this.modalRef = this.modalService.show(ConfirmationModalComponent, { initialState: state });
+    });
+  }
+
+  private async showDisablingOwnUserDialog(): Promise<boolean> {
+    return new Promise((resolve) => {
+      const state = this.getUserUpdateDialogState(
+        this.disableOwnUserTpl,
+        () => resolve(true),
+        () => resolve(false),
+      );
+      this.modalRef = this.modalService.show(ConfirmationModalComponent, { initialState: state });
+    });
+  }
+
+  private async showModals(removeOwnRole: boolean, disableOwnUser: boolean): Promise<boolean> {
+    let doEdit = true;
+    if (removeOwnRole && await this.showDisablingOwnUserDialog()) {
+      doEdit = true;
     }
+    if (doEdit && disableOwnUser && await this.showDisablingOwnUserDialog()) {
+      doEdit = true;
+    }
+    return Promise.resolve(doEdit);
+  }
+
+  editAction() {
+    this.showModals(this.isUserRemovingNeededRolePermissions(), this.isDisablingOwnUser()).then(
+      (confirmed) => {
+        if (confirmed) {
+          this.doEditAction();
+        }
+      }
+    );
   }
 
   private isCurrentUser(): boolean {
@@ -183,6 +230,10 @@ export class UserFormComponent implements OnInit {
       this.response &&
       !_.isEqual(this.response.roles, this.userForm.getValue('roles'))
     );
+  }
+
+  private isDisablingOwnUser(): boolean {
+    return this.isCurrentUser() && !this.userForm.getValue('enabled');
   }
 
   private isUserRemovingNeededRolePermissions(): boolean {

@@ -146,10 +146,8 @@ describe('PoolListComponent', () => {
   describe('pool deletion', () => {
     let taskWrapper: TaskWrapperService;
 
-    const setSelectedPool = (poolName: string) => {
-      component.selection.selected = [{ pool_name: poolName }];
-      component.selection.update();
-    };
+    const setSelectedPool = (poolName: string) =>
+      (component.selection.selected = [{ pool_name: poolName }]);
 
     const callDeletion = () => {
       component.deletePoolModal();
@@ -428,12 +426,7 @@ describe('PoolListComponent', () => {
 
   describe('getSelectionTiers', () => {
     const setSelectionTiers = (tiers: number[]) => {
-      component.selection.selected = [
-        {
-          tiers
-        }
-      ];
-      component.selection.update();
+      component.selection.selected = [{ tiers }];
       component.getSelectionTiers();
     };
 

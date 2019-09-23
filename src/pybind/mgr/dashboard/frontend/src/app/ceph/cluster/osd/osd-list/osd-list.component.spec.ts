@@ -55,7 +55,6 @@ describe('OsdListComponent', () => {
     // Table data and selection
     component.selection = new CdTableSelection();
     component.selection.selected = selection;
-    component.selection.update();
     component.osds = data;
     component.permissions = fakeAuthStorageService.getPermissions();
   };

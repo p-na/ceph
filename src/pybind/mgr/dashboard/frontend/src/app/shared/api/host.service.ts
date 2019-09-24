@@ -22,4 +22,8 @@ export class HostService {
   remove(hostname) {
     return this.http.delete(`${this.baseURL}/${hostname}`, { observe: 'response' });
   }
+
+  getSmartData(hostname) {
+    return this.http.get(`${this.baseURL}/${hostname}/smart`);
+  }
 }

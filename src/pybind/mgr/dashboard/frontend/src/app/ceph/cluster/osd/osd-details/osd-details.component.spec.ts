@@ -2,9 +2,8 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { of } from 'rxjs';
-
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { of } from 'rxjs';
 
 import { configureTestBed, i18nProviders } from '../../../../../testing/unit-test-helper';
 import { CoreModule } from '../../../../core/core.module';
@@ -12,6 +11,8 @@ import { OsdService } from '../../../../shared/api/osd.service';
 import { CdTableSelection } from '../../../../shared/models/cd-table-selection';
 import { CephModule } from '../../../ceph.module';
 import { PerformanceCounterModule } from '../../../performance-counter/performance-counter.module';
+import { SmartListComponent } from '../../../shared/smart-list/smart-list.component';
+import { OsdPerformanceHistogramComponent } from '../osd-performance-histogram/osd-performance-histogram.component';
 import { OsdDetailsComponent } from './osd-details.component';
 
 describe('OsdDetailsComponent', () => {
@@ -29,7 +30,7 @@ describe('OsdDetailsComponent', () => {
       CephModule,
       CoreModule
     ],
-    declarations: [],
+    declarations: [OsdDetailsComponent, OsdPerformanceHistogramComponent, SmartListComponent],
     providers: i18nProviders
   });
 

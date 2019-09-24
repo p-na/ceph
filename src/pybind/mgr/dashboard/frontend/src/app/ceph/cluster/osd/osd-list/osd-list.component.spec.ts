@@ -25,6 +25,9 @@ import { Permissions } from '../../../../shared/models/permissions';
 import { AuthStorageService } from '../../../../shared/services/auth-storage.service';
 import { CephModule } from '../../../ceph.module';
 import { PerformanceCounterModule } from '../../../performance-counter/performance-counter.module';
+import { SmartListComponent } from '../../../shared/smart-list/smart-list.component';
+import { OsdDetailsComponent } from '../osd-details/osd-details.component';
+import { OsdPerformanceHistogramComponent } from '../osd-performance-histogram/osd-performance-histogram.component';
 import { OsdReweightModalComponent } from '../osd-reweight-modal/osd-reweight-modal.component';
 import { OsdListComponent } from './osd-list.component';
 
@@ -81,9 +84,15 @@ describe('OsdListComponent', () => {
       CephModule,
       ReactiveFormsModule,
       RouterTestingModule,
-      CoreModule
+      CoreModule,
+      RouterTestingModule
     ],
-    declarations: [],
+    declarations: [
+      OsdListComponent,
+      OsdDetailsComponent,
+      OsdPerformanceHistogramComponent,
+      SmartListComponent
+    ],
     providers: [
       { provide: AuthStorageService, useValue: fakeAuthStorageService },
       TableActionsComponent,

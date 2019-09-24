@@ -12,6 +12,7 @@ import { HostService } from '../../../shared/api/host.service';
 import { Permissions } from '../../../shared/models/permissions';
 import { AuthStorageService } from '../../../shared/services/auth-storage.service';
 import { SharedModule } from '../../../shared/shared.module';
+import { CephSharedModule } from '../../shared/ceph-shared.module';
 import { InventoryComponent } from '../inventory/inventory.component';
 import { ServicesComponent } from '../services/services.component';
 import { HostDetailsComponent } from './host-details/host-details.component';
@@ -30,6 +31,7 @@ describe('HostsComponent', () => {
 
   configureTestBed({
     imports: [
+      CephSharedModule,
       SharedModule,
       HttpClientTestingModule,
       TabsModule.forRoot(),

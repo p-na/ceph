@@ -24,10 +24,10 @@ import { Permissions } from '../../../../shared/models/permissions';
 import { AuthStorageService } from '../../../../shared/services/auth-storage.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { PerformanceCounterModule } from '../../../performance-counter/performance-counter.module';
+import { SmartListComponent } from '../../../shared/smart-list/smart-list.component';
 import { OsdDetailsComponent } from '../osd-details/osd-details.component';
 import { OsdPerformanceHistogramComponent } from '../osd-performance-histogram/osd-performance-histogram.component';
 import { OsdReweightModalComponent } from '../osd-reweight-modal/osd-reweight-modal.component';
-import { OsdSmartListComponent } from '../osd-smart-list/osd-smart-list.component';
 import { OsdListComponent } from './osd-list.component';
 
 describe('OsdListComponent', () => {
@@ -88,7 +88,7 @@ describe('OsdListComponent', () => {
       OsdListComponent,
       OsdDetailsComponent,
       OsdPerformanceHistogramComponent,
-      OsdSmartListComponent
+      SmartListComponent
     ],
     providers: [
       { provide: AuthStorageService, useValue: fakeAuthStorageService },

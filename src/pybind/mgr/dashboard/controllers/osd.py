@@ -89,7 +89,7 @@ class Osd(RESTController):
         return smart_data
 
     @RESTController.Resource('GET')
-    def get_smart_data(self, svc_id):
+    def smart(self, svc_id):
         # type: (str) -> dict
         return self._get_smart_data(svc_id)
 

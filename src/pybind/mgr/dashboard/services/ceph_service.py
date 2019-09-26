@@ -163,8 +163,8 @@ class CephService(object):
         mgr.send_command(result, srv_type, srv_spec, json.dumps(argdict), "")
         r, outb, outs = result.wait()
         if r != 0:
-            msg = "send_command '{}' failed. (r={}, outs=\"{}\", kwargs={})".format(prefix, r, outs,
-                                                                                    kwargs)
+            msg = "send_command '{}' failed. (r={}, outs=\"{}\", kwargs={})".format(
+                prefix, r, outs, kwargs)
             logger.error(msg)
             raise SendCommandError(outs, prefix, argdict, r)
 
@@ -172,6 +172,36 @@ class CephService(object):
             return json.loads(outb)
         except Exception:  # pylint: disable=broad-except
             return outb
+
+    @staticmethod
+    def _get_smart_data_by_device(device_id):
+        # type: (str) -> dict
+        dev_smart_data = CephService.send_command('mon', 'smart', devid=device_id)
+        for dev_id, dev_data in dev_smart_data.items():
+            if 'error' in dev_data:
+                logger.warning('[CS] Error retrieving smartctl data for device ID %s: %s', dev_id,
+                               dev_smart_data)
+        return dev_smart_data
+
+    @staticmethod
+    def get_smart_data_by_hostname(hostname):
+        # type: (str) -> dict
+        devices = CephService.send_command('mon', 'device ls-by-host', host=hostname)
+        smart_data = {}
+        for device in devices:
+            if device['devid'] not in smart_data:
+                smart_data.update(CephService._get_smart_data_by_device(device['devid']))
+        return smart_data
+
+    @staticmethod
+    def get_smart_data_by_daemon(daemon_type, daemon_id):
+        # type: (str, str) -> dict
+        smart_data = CephService.send_command(daemon_type, 'smart', daemon_id)
+        for _, dev_data in smart_data.items():
+            if 'error' in dev_data:
+                logger.warning('[CS] Error retrieving smartctl data for daemon "%s.%s"',
+                               daemon_type, daemon_id)
+        return smart_data
 
     @classmethod
     def get_rates(cls, svc_type, svc_name, path):

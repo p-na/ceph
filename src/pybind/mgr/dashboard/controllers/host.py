@@ -4,7 +4,7 @@ import copy
 
 from mgr_util import merge_dicts
 from . import ApiController, RESTController, Task
-from .. import mgr, logger
+from .. import mgr
 from ..exceptions import DashboardException
 from ..security import Scope
 from ..services.orchestrator import OrchClient
@@ -135,4 +135,4 @@ class Host(RESTController):
     @RESTController.Resource('GET')
     def smart(self, hostname):
         # type: (str) -> dict
-        return self._get_smart_data(hostname)
+        return CephService.get_smart_data_by_hostname(hostname)

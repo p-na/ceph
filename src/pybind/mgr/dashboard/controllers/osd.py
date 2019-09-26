@@ -64,25 +64,10 @@ class Osd(RESTController):
         return resp if svc_id is None else resp[int(svc_id)]
 
     @staticmethod
-    def _get_smart_data(svc_id):
+    def _get_smart_data(osd_id):
         # type: (str) -> dict
-        """
-        Returns S.M.A.R.T data for the given OSD ID.
-        :type svc_id: Numeric ID of the OSD
-        """
-        devices = CephService.send_command(
-            'mon', 'device ls-by-daemon', who='osd.{}'.format(svc_id))
-        smart_data = {}
-        for dev_id in [d['devid'] for d in devices]:
-            if dev_id not in smart_data:
-                dev_smart_data = mgr.remote('devicehealth', 'do_scrape_daemon', 'osd', svc_id,
-                                            dev_id)
-                for _, dev_data in dev_smart_data.items():
-                    if 'error' in dev_data:
-                        logger.warning('[OSD] Error retrieving smartctl data for device ID %s: %s',
-                                       dev_id, dev_smart_data)
-                smart_data.update(dev_smart_data)
-        return smart_data
+        """Returns S.M.A.R.T data for the given OSD ID."""
+        return CephService.get_smart_data_by_daemon('osd', osd_id)
 
     @RESTController.Resource('GET')
     def smart(self, svc_id):

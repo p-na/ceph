@@ -4,7 +4,7 @@ import copy
 
 from mgr_util import merge_dicts
 from . import ApiController, RESTController, Task
-from .. import mgr, logger
+from .. import mgr
 from ..exceptions import DashboardException
 from ..security import Scope
 from ..services.orchestrator import OrchClient
@@ -104,25 +104,7 @@ class Host(RESTController):
                     hostname),
                 component='orchestrator')
 
-    @staticmethod
-    def _get_smart_data(hostname):
-        # type: (str) -> dict
-        """
-        Returns S.M.A.R.T data for the given hostname.
-        """
-        devices = CephService.send_command('mon', 'device ls-by-host', host=hostname)
-        smart_data = {}
-        for device in devices:
-            if device['devid'] not in smart_data:
-                dev_smart_data = CephService.send_command('mon', 'smart', name=device['devid'])
-                for dev_id, dev_data in dev_smart_data.items():
-                    if 'error' in dev_data:
-                        logger.warning('[Host] Error retrieving smartctl data for device ID %s: %s',
-                                       dev_id, dev_smart_data)
-                smart_data.update(dev_smart_data)
-        return smart_data
-
     @RESTController.Resource('GET')
     def smart(self, hostname):
         # type: (str) -> dict
-        return self._get_smart_data(hostname)
+        return CephService.get_smart_data_by_hostname(hostname)

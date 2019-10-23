@@ -72,6 +72,9 @@ aspects of your Ceph cluster:
   services are running and which version of Ceph is installed.
 * **Performance counters**: Display detailed service-specific statistics for
   each running service.
+* **Device Management**: Displays which hardware storage devices are consumed
+  by which daemons, and shows health metrics about those devices in order to
+  provide tools to predict hardware failure.
 * **Monitors**: List all MONs, their quorum status, open sessions.
 * **Configuration Editor**: Display all available configuration options,
   their description, type and default values and edit the current values.
@@ -317,6 +320,34 @@ into timeouts, then you can set the timeout value to your needs::
 The default value is 45 seconds.
 
 .. _dashboard-iscsi-management:
+
+Device Management
+^^^^^^^^^^^^^^^^^
+
+Troubleshooting Device Management
+"""""""""""""""""""""""""""""""""
+
+Ceph provides functionality to collect health metrics of hardware devices. To be
+able to list devices and create unique IDs for them, Ceph uses ``udev``. If udev
+is unable to determine devices correctly, Ceph and eventually the Ceph Dashboard
+will also not be able to display those device. An example where udev cannot
+determine any information about the device is a Btrfs Raid-0 configuration, but
+also environments like Docker are, without proper configuration, affected.
+
+For collecting metrics about the health of devices, Ceph uses ``smartctl`` of
+the ``smartmontools`` package. If the ``smartctl`` binary is unavailable, health
+metrics cannot be collected. Furthermore, the collection of SMART data requires
+smartmontools in version greater or equal 7.x. If the version of smartmontools
+is less than 7.x, the dashboard will show a proper notification. If
+smartmontools are not installed, the dashboard back-end returns an empty result
+set and the front-end will show a notification that data cannot be shown.
+
+.. note::
+
+  Please note that if Ceph is unable to collect device information via udev and
+  smartmontools aren't installed on the hosts, the ``diskprediction`` manager
+  module cannot be used and the Ceph Dashboard will not be able to display any
+  data about hardware devices and their health metrics.
 
 Enabling iSCSI Management
 ^^^^^^^^^^^^^^^^^^^^^^^^^

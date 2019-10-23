@@ -9,6 +9,8 @@ import {
   SmartError
 } from '../../../shared/api/osd.service';
 import { CdTableColumn } from '../../../shared/models/cd-table-column';
+import { CephReleaseNamePipe } from '../../../shared/pipes/ceph-release-name.pipe';
+import { SummaryService } from '../../../shared/services/summary.service';
 
 @Component({
   selector: 'cd-smart-list',
@@ -23,6 +25,12 @@ export class SmartListComponent implements OnInit, OnChanges {
 
   loading = false;
   incompatible = false;
+
+  docsUrl = '';
+
+  get hasData() {
+    return _.isEmpty(this.data);
+  }
 
   data: {
     [deviceId: string]: {
@@ -39,8 +47,16 @@ export class SmartListComponent implements OnInit, OnChanges {
   constructor(
     private i18n: I18n,
     private osdService: OsdService,
-    private hostService: HostService
-  ) {}
+    private hostService: HostService,
+    private summaryService: SummaryService,
+    private cephReleaseNamePipe: CephReleaseNamePipe
+  ) {
+    const summary = this.summaryService.getCurrentSummary();
+    const releaseName = this.cephReleaseNamePipe.transform(summary.version);
+    this.docsUrl =
+      `http://docs.ceph.com/docs/${releaseName}/mgr/dashboard/` +
+      `#troubleshooting-device-management`;
+  }
 
   private isSmartError(data: SmartDataV1 | SmartError): data is SmartError {
     return (data as SmartError).error !== undefined;

@@ -1,26 +1,29 @@
 <ng-container *ngIf="!loading; else isLoading">
   <ng-container *ngIf="incompatible; else isCompatible">
-    <cd-alert-panel type="warning"
-                    i18n>The data received has the JSON format version 2.x and is currently incompatible with the
-      dashboard.</cd-alert-panel>
+    <cd-alert-panel id="alert-wrong-format"
+                    type="warning"
+                    i18n>The data received has the JSON format version 2.x and is currently incompatible with the dashboard.</cd-alert-panel>
   </ng-container>
   <ng-template #isCompatible>
     <tabset *ngFor="let device of data | keyvalue">
       <tab [heading]="device.value.device + ' (' + device.value.identifier + ')'">
         <ng-container *ngIf="device.value.error; else noError">
-          <cd-alert-panel type="warning">{{ device.value.userMessage }}</cd-alert-panel>
+          <cd-alert-panel id="alert-error"
+                          type="warning">{{ device.value.userMessage }}</cd-alert-panel>
         </ng-container>
         <ng-template #noError>
           <!-- HDD/NVMe self test -->
           <ng-container *ngIf="device.value.info.smart_status.passed; else selfTestFailed">
-            <cd-alert-panel size="slim"
+            <cd-alert-panel id="alert-self-test-passed"
+                            size="slim"
                             type="info"
                             i18n-title
                             title="SMART overall-health self-assessment test result"
                             i18n>passed</cd-alert-panel>
           </ng-container>
           <ng-template #selfTestFailed>
-            <cd-alert-panel size="slim"
+            <cd-alert-panel id="alert-self-test-failed"
+                            size="slim"
                             type="warning"
                             i18n-title
                             title="SMART overall-health self-assessment test result"

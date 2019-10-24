@@ -169,7 +169,7 @@ class CephService(object):
             raise SendCommandError(outs, prefix, argdict, r)
 
         try:
-            return json.loads(outb)
+            return json.loads(outb or outs)
         except Exception:  # pylint: disable=broad-except
             return outb
 

@@ -4,11 +4,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { TabsetComponent, TabsetConfig, TabsModule } from 'ngx-bootstrap/tabs';
 
-import _ = require('lodash');
+import * as _ from 'lodash';
 import { of } from 'rxjs';
 
 import { configureTestBed, i18nProviders } from '../../../../testing/unit-test-helper';
 import { OsdService } from '../../../shared/api/osd.service';
+import { SmartDataResult } from '../../../shared/models/smart';
 import { SharedModule } from '../../../shared/shared.module';
 import { SmartListComponent } from './smart-list.component';
 
@@ -17,7 +18,7 @@ describe('OsdSmartListComponent', () => {
   let fixture: ComponentFixture<SmartListComponent>;
   let osdService: OsdService;
 
-  const SMART_DATA_VERSION_1_0 = require('./fixtures/smart_data_version_1_0_response.json');
+  const SMART_DATA_VERSION_1_0 = require('./fixtures/smart_data_version_1_0_hdd_response.json');
 
   const spyOnGetSmartData = (fn: (id: number) => any) =>
     spyOn(osdService, 'getSmartData').and.callFake(fn);
@@ -93,7 +94,7 @@ describe('OsdSmartListComponent', () => {
         'ata_smart_selective_self_test_log',
         'ata_smart_data'
       ];
-      _.each(component.data, (smartData, _deviceId) => {
+      _.each(component.data, (smartData: SmartDataResult, _deviceId) => {
         _.each(excludes, (exclude) => expect(smartData.info[exclude]).toBeUndefined());
       });
     });

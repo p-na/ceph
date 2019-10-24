@@ -24,6 +24,7 @@ export class HostService {
   }
 
   getSmartData(hostname) {
+    // FIXME add types after moving types from osd.service to models/smart
     return this.http.get(`${this.baseURL}/${hostname}/smart`);
   }
 }

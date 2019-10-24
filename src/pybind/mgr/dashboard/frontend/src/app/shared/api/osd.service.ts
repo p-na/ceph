@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { I18n } from '@ngx-translate/i18n-polyfill';
 
+import { SmartDataResponseV1 } from '../models/smart';
 import { ApiModule } from './api.module';
 
 @Injectable({
@@ -76,9 +77,7 @@ export class OsdService {
    * @param id OSD ID
    */
   getSmartData(id: number) {
-    return this.http.get<{ [deviceId: string]: NvmeSmartData_V1 | HddSmartDataV1 | SmartError }>(
-      `${this.path}/${id}/smart`
-    );
+    return this.http.get<SmartDataResponseV1>(`${this.path}/${id}/smart`);
   }
 
   scrub(id, deep) {

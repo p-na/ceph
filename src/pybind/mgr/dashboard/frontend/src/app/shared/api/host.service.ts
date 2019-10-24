@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { SmartDataResponseV1 } from '../models/smart';
 import { ApiModule } from './api.module';
 
 @Injectable({
@@ -24,7 +25,6 @@ export class HostService {
   }
 
   getSmartData(hostname) {
-    // FIXME add types after moving types from osd.service to models/smart
-    return this.http.get(`${this.baseURL}/${hostname}/smart`);
+    return this.http.get<SmartDataResponseV1>(`${this.baseURL}/${hostname}/smart`);
   }
 }

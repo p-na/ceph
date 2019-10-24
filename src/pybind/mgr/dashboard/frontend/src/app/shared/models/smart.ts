@@ -203,7 +203,7 @@ interface SmartBasicResult {
  * The SMART data response structure of the back-end. Per device it will either
  * contain the structure for a HDD, NVMe or an error.
  */
-export interface SmartDataResponse {
+export interface SmartDataResponseV1 {
   [deviceId: string]: HddSmartDataV1 | NvmeSmartDataV1 | SmartError;
 }
 

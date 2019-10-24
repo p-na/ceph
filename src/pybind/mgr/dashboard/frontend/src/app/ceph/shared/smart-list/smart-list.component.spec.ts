@@ -122,6 +122,23 @@ describe('OsdSmartListComponent', () => {
     });
   });
 
+  describe('tests NVMe version 1.x', () => {
+    beforeEach(() => initializeComponentWithData('nvme_v1'));
+
+    it('should return with proper keys', () => {
+      _.each(component.data, (smartData, _deviceId) => {
+        expect(_.keys(smartData)).toEqual(['info', 'smart', 'device', 'identifier']);
+      });
+    });
+
+    it('should not contain excluded keys in `info`', () => {
+      const excludes = ['nvme_smart_health_information_log'];
+      _.each(component.data, (smartData: SmartDataResult, _deviceId) => {
+        _.each(excludes, (exclude) => expect(smartData.info[exclude]).toBeUndefined());
+      });
+    });
+  });
+
   it('should not work for version 2.x', () => {
     initializeComponentWithData('nvme_v1', { json_format_version: [2, 0] });
     expect(component.data).toEqual({});

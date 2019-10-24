@@ -179,7 +179,7 @@ class CephService(object):
         dev_smart_data = CephService.send_command('mon', 'smart', devid=device_id)
         for dev_id, dev_data in dev_smart_data.items():
             if 'error' in dev_data:
-                logger.warning('[SMRT] Error retrieving smartctl data for device ID %s: %s', dev_id,
+                logger.warning('[SMART] Error retrieving smartctl data for device ID %s: %s', dev_id,
                                dev_smart_data)
         return dev_smart_data
 
@@ -201,8 +201,8 @@ class CephService(object):
         if smart_data:
             for _, dev_data in smart_data.items():
                 if 'error' in dev_data:
-                    logger.warning('[SMRT] Error retrieving smartctl data for daemon "%s.%s"',
-                                daemon_type, daemon_id)
+                    logger.warning('[SMART] Error retrieving smartctl data for daemon "%s.%s"',
+                                   daemon_type, daemon_id)
         return smart_data or {}
 
     @classmethod

@@ -174,24 +174,27 @@ class CephService(object):
             return outb
 
     @staticmethod
-    def _get_smart_data_by_device(device_id):
-        # type: (str) -> dict
-        dev_smart_data = CephService.send_command('mon', 'smart', devid=device_id)
-        for dev_id, dev_data in dev_smart_data.items():
-            if 'error' in dev_data:
-                logger.warning('[CS] Error retrieving smartctl data for device ID %s: %s', dev_id,
-                               dev_smart_data)
-        return dev_smart_data
+    def get_smart_data_by_device(device):
+        dev_id = device['devid']
+        if 'daemons' in device and device['daemons']:
+            svc_type, svc_id = [daemon for daemon in device['daemons']
+                                if daemon.startswith('mon')][0].split('.')
+            dev_smart_data = CephService.send_command(svc_type, 'smart', svc_id, devid=dev_id)
+            for dev_id, dev_data in dev_smart_data.items():
+                if 'error' in dev_data:
+                    logger.warning('[SMART] error retrieving smartctl data for device ID "%s": %s',
+                                   dev_id, dev_data)
+            return dev_smart_data
+        logger.warning('[SMART] key \'daemon\' not found for device with ID "%s"', dev_id)
+        return {}
 
     @staticmethod
     def get_smart_data_by_hostname(hostname):
         # type: (str) -> dict
-        devices = CephService.send_command('mon', 'device ls-by-host', host=hostname)
-        smart_data = {}
-        for device in devices:
-            if device['devid'] not in smart_data:
-                smart_data.update(CephService._get_smart_data_by_device(device['devid']))
-        return smart_data
+        return {
+            device['devid']: CephService.get_smart_data_by_device(device)
+            for device in CephService.send_command('mon', 'device ls-by-host', host=hostname)
+        }
 
     @staticmethod
     def get_smart_data_by_daemon(daemon_type, daemon_id):
@@ -199,7 +202,7 @@ class CephService(object):
         smart_data = CephService.send_command(daemon_type, 'smart', daemon_id)
         for _, dev_data in smart_data.items():
             if 'error' in dev_data:
-                logger.warning('[CS] Error retrieving smartctl data for daemon "%s.%s"',
+                logger.warning('[SMART] Error retrieving smartctl data for daemon "%s.%s"',
                                daemon_type, daemon_id)
         return smart_data
 

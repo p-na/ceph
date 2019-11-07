@@ -10,7 +10,6 @@ from ..security import Scope
 from ..services.orchestrator import OrchClient
 from ..services.ceph_service import CephService
 from ..services.exception import handle_orchestrator_error
-from ..services.ceph_service import CephService
 
 
 def host_task(name, metadata, wait_for=10.0):
@@ -105,34 +104,12 @@ class Host(RESTController):
                     hostname),
                 component='orchestrator')
 
-    def _devices(self, hostname):
-        return CephService.send_command('mon', 'device ls-by-host', host=hostname)
-
-
     @RESTController.Resource('GET')
     def devices(self, hostname):
         # (str) -> List
-        return self._devices(hostname)
-
-    @staticmethod
-    def _get_smart_data(hostname):
-        # type: (str) -> dict
-        """
-        Returns S.M.A.R.T data for the given hostname.
-        """
-        devices = self._devices(hostname)
-        smart_data = {}
-        for device in devices:
-            if device['devid'] not in smart_data:
-                dev_smart_data = CephService.send_command('mon', 'smart', name=device['devid'])
-                for dev_id, dev_data in dev_smart_data.items():
-                    if 'error' in dev_data:
-                        logger.warning('[Host] Error retrieving smartctl data for device ID %s: %s',
-                                       dev_id, dev_smart_data)
-                smart_data.update(dev_smart_data)
-        return smart_data
+        return CephService.get_devices_by_host(hostname)
 
     @RESTController.Resource('GET')
     def smart(self, hostname):
         # type: (str) -> dict
-        return CephService.get_smart_data_by_hostname(hostname)
+        return CephService.get_smart_data_by_host(hostname)

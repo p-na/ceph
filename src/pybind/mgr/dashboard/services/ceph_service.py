@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-
 import json
+from six.moves import reduce
 
 import rados
 
@@ -189,12 +189,17 @@ class CephService(object):
         return {}
 
     @staticmethod
-    def get_smart_data_by_hostname(hostname):
+    def get_devices_by_host(hostname):
+        # (str) -> dict
+        return CephService.send_command('mon', 'device ls-by-host', host=hostname)
+
+    @staticmethod
+    def get_smart_data_by_host(hostname):
         # type: (str) -> dict
-        return {
-            device['devid']: CephService.get_smart_data_by_device(device)
-            for device in CephService.send_command('mon', 'device ls-by-host', host=hostname)
-        }
+        return reduce(lambda a, b: a.update(b) or a, [
+            CephService.get_smart_data_by_device(device)
+            for device in CephService.get_devices_by_host(hostname)
+        ], {})
 
     @staticmethod
     def get_smart_data_by_daemon(daemon_type, daemon_id):

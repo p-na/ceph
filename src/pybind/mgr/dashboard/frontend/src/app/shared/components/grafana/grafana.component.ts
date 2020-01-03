@@ -29,7 +29,7 @@ export class GrafanaComponent implements OnInit, OnChanges {
   time: string;
   grafanaTimes: any;
   icons = Icons;
-  validationResponse: any;
+  validationResponse: any = '';
   showValidationResponse = false;
   readonly DEFAULT_TIME: string = 'from=now-1h&to=now';
 

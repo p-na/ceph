@@ -12,6 +12,7 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { DirectivesModule } from '../directives/directives.module';
 import { PipesModule } from '../pipes/pipes.module';
 import { AlertPanelComponent } from './alert-panel/alert-panel.component';
@@ -51,7 +52,8 @@ import { ViewCacheComponent } from './view-cache/view-cache.component';
     DirectivesModule,
     BsDropdownModule,
     NgBootstrapFormValidationModule,
-    RouterModule
+    RouterModule,
+    CollapseModule.forRoot()
   ],
   declarations: [
     ViewCacheComponent,

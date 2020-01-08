@@ -1805,7 +1805,14 @@ def command_deploy():
         daemon_port = Monitoring.port_map[daemon_type]
         if port_in_use(daemon_port):
             raise Error("TCP Port '{}' required for {} is already in use".format(daemon_port, daemon_type))
-        elif args.image == DEFAULT_IMAGE:
+
+        # Monitoring metadata is nested dicts, so asking mypy to ignore
+        p = Monitoring.components[daemon_type]  # type: ignore
+        metadata = p.get('image', dict())  # type: ignore
+
+        if args.image == DEFAULT_IMAGE and metadata['image'] != '':
+            args.image = metadata['image']
+        else:
             raise Error("--image parameter must be supplied for {}".format(daemon_type))
 
         if daemon_type == 'prometheus':
@@ -1816,9 +1823,6 @@ def command_deploy():
         elif daemon_type == 'node-exporter':
             uid, gid = 65534, 65534
 
-        # Monitoring metadata is nested dicts, so asking mypy to ignore
-        p = Monitoring.components[daemon_type]  # type: ignore
-        metadata = p.get('image', dict())  # type: ignore
         monitoring_args = [
             '--user',
             str(uid),

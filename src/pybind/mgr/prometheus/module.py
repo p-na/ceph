@@ -985,6 +985,21 @@ class Module(MgrModule):
 
         self.metrics.update(new_metrics)
 
+    @profile_method()
+    def calc_collect_time(self):
+        self.metrics['collect_time'] = Metric(
+            'gauge',
+            'collect_time',
+            'Time it took to collect these Metrics',
+            ('subsection',),
+        )
+        # Collect all timing data and make it available as metric, excluding
+        # this `collect` method because it has not finished at this point and
+        # hence there's no `_execution_duration` attribute to be found.
+        for method_name, method in Module.__dict__.items():
+            if hasattr(method, '_execution_duration'):
+                self.metrics['collect_time'].set(method._execution_duration, (method_name,))
+
     @profile_method(True)
     def collect(self):
         # Clear the metrics before scraping
@@ -1050,6 +1065,8 @@ class Module(MgrModule):
 
         self.add_fixed_name_metrics()
         self.get_rbd_stats()
+        
+        self.calc_collect_time()
 
         # Return formatted metrics and clear no longer used data
         _metrics = [m.str_expfmt() for m in self.metrics.values()]

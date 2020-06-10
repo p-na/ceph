@@ -231,6 +231,7 @@ class Module(MgrModule):
         {'name': 'server_port'},
         {'name': 'scrape_interval'},
         {'name': 'stale_cache_strategy'},
+        {'name': 'disable_cache'},
         {'name': 'rbd_stats_pools'},
         {'name': 'rbd_stats_pools_refresh_interval', 'type': 'int', 'default': 300},
     ]
@@ -242,11 +243,12 @@ class Module(MgrModule):
         super(Module, self).__init__(*args, **kwargs)
         self.metrics = self._setup_static_metrics()
         self.shutdown_event = threading.Event()
-        self.collect_lock = threading.Lock()
+        self.collect_lock = threading.RLock()
         self.collect_time = 0.0
         self.scrape_interval = 10.0
         self.stale_cache_strategy = self.STALE_CACHE_FAIL
         self.collect_cache = None
+        self.disable_cache = False
         self.rbd_stats = {
             'pools': {},
             'pools_refresh_time': 0,
@@ -267,7 +269,11 @@ class Module(MgrModule):
         }  # type: Dict[str, Any]
         global _global_instance
         _global_instance = self
-        MetricCollectionThread(_global_instance).start()
+        disable_cache_text = self.get_localized_module_option('disable_cache', '')
+        if disable_cache_text == '' or disable_cache_text.lower() == 'false':
+            MetricCollectionThread(_global_instance).start()
+        else:
+            self.disable_cache = True
 
     def _setup_static_metrics(self):
         metrics = {}
@@ -1153,6 +1159,10 @@ class Module(MgrModule):
             @staticmethod
             def _metrics(inst):
                 # type: (Module) -> Any
+                if inst.disable_cache:
+                    with inst.collect_lock:
+                        return inst.collect()
+
                 # Return cached data if available and collected before the cache times out
                 if not inst.collect_cache:
                     raise cherrypy.HTTPError(503, 'No cached data available yet')

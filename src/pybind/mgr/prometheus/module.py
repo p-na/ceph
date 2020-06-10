@@ -10,9 +10,11 @@ import threading
 import time
 from mgr_module import MgrModule, MgrStandbyModule, CommandResult, PG_STATES
 from mgr_util import get_default_addr, profile_method
+from . import mgr
 from rbd import RBD
+
 try:
-    from typing import Optional, Dict, Any
+    from typing import Optional, Dict, Any, Tuple
 except:
     pass
 
@@ -66,7 +68,7 @@ DF_POOL = ['max_avail', 'stored', 'stored_raw', 'objects', 'dirty',
 
 OSD_POOL_STATS = ('recovering_objects_per_sec', 'recovering_bytes_per_sec',
                   'recovering_keys_per_sec', 'num_objects_recovered',
-                  'num_bytes_recovered', 'num_bytes_recovered')
+                  'num_bytes_recovered')
 
 OSD_FLAGS = ('noup', 'nodown', 'noout', 'noin', 'nobackfill', 'norebalance',
              'norecover', 'noscrub', 'nodeep-scrub')
@@ -108,7 +110,22 @@ DISK_OCCUPATION = ('ceph_daemon', 'device', 'db_device',
 NUM_OBJECTS = ['degraded', 'misplaced', 'unfound']
 
 
+class MetricParseError(Exception):
+    pass
+
+
 class Metric(object):
+    re_metric = re.compile(
+        r'''
+        ^
+        (\w+)             # Mandatory metric name
+        (?:\{([^\}]+)\})? # Optional metric labels
+        \s+               # Any whitespace
+        (\d+)             # Mandatory metric value
+        (\d+)?            # Optional metric timestamp
+        $
+    ''', re.X)
+
     def __init__(self, mtype, name, desc, labels=None):
         self.mtype = mtype
         self.name = name
@@ -120,9 +137,37 @@ class Metric(object):
         self.value = {}
 
     def set(self, value, labelvalues=None):
+        # type: (Any, Optional[Tuple[Any]]) -> Metric
         # labelvalues must be a tuple
         labelvalues = labelvalues or ('',)
         self.value[labelvalues] = value
+        return self
+
+    @classmethod
+    def parse(cls, metric):
+        # type: (str) -> Metric
+        """
+        Parses a simple metric string. Ignores metric comments (which includes the metric type).
+        """
+        match = cls.re_metric.match(metric)
+        if not match:
+            raise MetricParseError('Regular expression does not match metric: {}: {}'.format(
+                cls.re_metric, metric))
+
+        name, labels_str, value, _ = match.groups()
+
+        labels = {}
+        if labels_str:
+            for label_str in re.split(r'\s*,\s*', labels_str):
+                label_name, label_value = re.split(r'=', label_str)
+                labels[label_name] = label_value.strip('"')
+
+        result_metric = cls('', name, '', tuple(labels.keys()) or None)
+        for k, v in labels.items():
+            result_metric.set(v, (k,))
+        result_metric.set(value)
+
+        return result_metric
 
     def str_expfmt(self):
 
@@ -241,6 +286,9 @@ class Module(MgrModule):
 
     def __init__(self, *args, **kwargs):
         super(Module, self).__init__(*args, **kwargs)
+
+        mgr.init(self)
+        
         self.metrics = self._setup_static_metrics()
         self.shutdown_event = threading.Event()
         self.collect_lock = threading.RLock()
@@ -1023,6 +1071,8 @@ class Module(MgrModule):
         self.get_pg_status()
         self.get_num_objects()
 
+    @profile_method
+    def get_performance_counters(self):
         for daemon, counters in self.get_all_perf_counters().items():
             for path, counter_info in counters.items():
                 # Skip histograms, they are represented by long running avgs
@@ -1069,9 +1119,42 @@ class Module(MgrModule):
                         )
                     self.metrics[path].set(value, labels)
 
-        self.add_fixed_name_metrics()
+    def calc_collect_time(self):
+        """
+        Calculates the time it takes to gather the metrics from Ceph and provides this information
+        as metrics to Prometheus.
+        """
+        self.metrics['collect_time'] = Metric(
+            'gauge',
+            'collect_time',
+            'Time it took to collect these Metrics',
+            ('subsection',),
+        )
+        # Collect all timing data and make it available as metric.
+        for method_name, method in Module.__dict__.items():
+            if hasattr(method, '_execution_duration'):
+                self.metrics['collect_time'].set(method._execution_duration, (method_name,))
+
+    @profile_method(True)
+    def collect(self):
+        # Clear the metrics before scraping
+        for k in self.metrics.keys():
+            self.metrics[k].clear()
+
+        self.get_health()
+        self.get_df()
+        self.get_pool_stats()
+        self.get_fs()
+        self.get_osd_stats()
+        self.get_quorum_status()
+        self.get_mgr_status()
+        self.get_metadata_and_osd_status()
+        self.get_pg_status()
+        self.get_num_objects()
+        self.get_performance_counters()
         self.get_rbd_stats()
-        
+
+        self.add_fixed_name_metrics()
         self.calc_collect_time()
 
         # Return formatted metrics and clear no longer used data
@@ -1256,6 +1339,7 @@ class Module(MgrModule):
 class StandbyModule(MgrStandbyModule):
     def __init__(self, *args, **kwargs):
         super(StandbyModule, self).__init__(*args, **kwargs)
+        mgr.init(self)
         self.shutdown_event = threading.Event()
 
     def serve(self):

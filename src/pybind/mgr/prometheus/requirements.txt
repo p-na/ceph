@@ -1,1 +1,4 @@
 CherryPy
+debugpy
+black
+yapf

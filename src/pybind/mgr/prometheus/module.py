@@ -899,7 +899,7 @@ class Module(MgrModule):
                     {'type': 'pool_id', 'regex': pool_id_regex},
                     {'type': 'namespace', 'regex': namespace_regex},
                     {'type': 'object_name',
-                     'regex': '^(?:rbd|journal)_data\.(?:([0-9]+)\.)?([^.]+)\.'},
+                     'regex': r'^(?:rbd|journal)_data\.(?:([0-9]+)\.)?([^.]+)\.'},
                 ],
                 'performance_counter_descriptors': list(counters_info),
             }

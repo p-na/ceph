@@ -809,7 +809,7 @@ class Module(MgrModule):
         # stats are collected for every namespace in the pool.
         pools_string = self.get_localized_module_option('rbd_stats_pools', '')
         pools = {}  # type: Dict[str, Any]
-        for p in [x for x in re.split('[\s,]+', pools_string) if x]:
+        for p in [x for x in re.split(r'[\s,]+', pools_string) if x]:
             s = p.split('/', 2)
             pool_name = s[0]
             if len(s) == 1:
@@ -876,7 +876,7 @@ class Module(MgrModule):
                     {'type': 'pool_id', 'regex': pool_id_regex},
                     {'type': 'namespace', 'regex': namespace_regex},
                     {'type': 'object_name',
-                     'regex': '^(?:rbd|journal)_data\.(?:([0-9]+)\.)?([^.]+)\.'},
+                     'regex': r'^(?:rbd|journal)_data\.(?:([0-9]+)\.)?([^.]+)\.'},
                 ],
                 'performance_counter_descriptors': list(counters_info),
             }

@@ -118,14 +118,28 @@ class ModuleTest(TestCase):
         }
         Module.list_servers = lambda _: [  # type: ignore
             {
-                "hostname": "home",
+                "hostname":
+                "home",
                 "services": [
-                    {"type": "mgr", "id": "x"},
-                    {"type": "mon", "id": "a"},
-                    {"type": "mon", "id": "b"},
-                    {"type": "mon", "id": "c"},
+                    {
+                        "type": "mgr",
+                        "id": "x"
+                    },
+                    {
+                        "type": "mon",
+                        "id": "a"
+                    },
+                    {
+                        "type": "mon",
+                        "id": "b"
+                    },
+                    {
+                        "type": "mon",
+                        "id": "c"
+                    },
                 ],
-                "ceph_version": "ceph version Development (no_version) pacific (dev)",
+                "ceph_version":
+                "ceph version Development (no_version) pacific (dev)",
             }
         ]
 
@@ -147,16 +161,12 @@ class ModuleTest(TestCase):
                     return json.loads(data)
             except OSError as e:
                 raise OSError(
-                    "fixture fixtures/{}.json not found or unable to open".format(
-                        data_name
-                    )
-                )
+                    "fixture fixtures/{}.json not found or unable to open".format(data_name))
 
             except json.decoder.JSONDecodeError as e:
                 raise json.decoder.JSONDecodeError(
                     "Error decoding fixtures/{}.json: {}\n\ndata:{}".format(
-                        data_name, str(e), data
-                    ),
+                        data_name, str(e), data),
                     e.doc,
                     e.pos,
                 )

@@ -581,7 +581,7 @@ Configuring Dashboard
 After you have set up Grafana and Prometheus, you will need to configure the
 connection information that the Ceph Dashboard will use to access Grafana.
 
-You need to tell the dashboard on which url Grafana instance is running/deployed::
+You need to tell the dashboard on which URL Grafana instance is running/deployed::
 
   $ ceph dashboard set-grafana-api-url <grafana-server-url>  # default: ''
 
@@ -604,6 +604,36 @@ e.g. caused by certificates signed by unknown CA or not matching the host name::
   $ ceph dashboard set-grafana-api-ssl-verify False
 
 You can directly access Grafana Instance as well to monitor your cluster.
+
+Alternative URL for Browsers
+""""""""""""""""""""""""""""
+
+The Ceph Dashboard backend requires the URL to Grafana to be able to verify the
+existence of Grafana Dashboards before the frontend even loads them. Due to the
+nature of how Grafana is implemented in Ceph Dashboard, this means that two
+connections are required to successfully be able to see Grafana graphs in Ceph
+Dashboard::
+
+- The backend needs to verify the existence of the requested graph. If this
+  request succeeds, it lets the frontend know that it can safely access Grafana.
+- The frontend then requests the Grafana graphs directly from the users
+  browser using an iframe. The Grafana server is accessed directly without any
+  detour through Ceph Dashboard.
+
+Now, it might happen that your setup is somewhat difficult and the users browser
+cannot access the URL configured in Ceph Dashboard. To solve this issue, a
+separate URL can be configured which will solely be used to tell the frontend
+(the users browser) which URL it should use to access Grafana. This setting
+won't ever be changed automatically, unlike the GRAFANA_API_URL which is set by
+:ref:`cephadm` (only if cephadm is used to deploy monitoring services).
+
+To change the URL that is returned to the frontend issue the following command::
+
+  $ ceph dashboard set-grafana-frontend-api-url <grafana-server-url>
+
+If no value is set for that option, it will simply fall back to the value of the
+GRAFANA_API_URL option. If set, it will instruct the browser to use this URL to
+access Grafana.
 
 .. _dashboard-sso-support:
 

@@ -17,12 +17,17 @@ URL_SCHEMA = {
 @ControllerDoc("Grafana Management API", "Grafana")
 class Grafana(BaseController):
 
+    @staticmethod
+    def _grafana_frontend_url():
+        # type: () -> str
+        return (str(Settings.GRAFANA_FRONTEND_API_URL) or str(Settings.GRAFANA_API_URL)).rstrip('/')
+
     @Endpoint()
     @ReadPermission
     @EndpointDoc("List Grafana URL Instance",
                  responses={200: URL_SCHEMA})
     def url(self):
-        response = {'instance': Settings.GRAFANA_API_URL}
+        response = {'instance': self._grafana_frontend_url()}
         return response
 
     @Endpoint()
@@ -30,7 +35,7 @@ class Grafana(BaseController):
     def validation(self, params):
         grafana = GrafanaRestClient()
         method = 'GET'
-        url = Settings.GRAFANA_API_URL.rstrip('/') + \
+        url = str(Settings.GRAFANA_API_URL).rstrip('/') + \
             '/api/dashboards/uid/' + params
         response = grafana.url_validation(method, url)
         return response

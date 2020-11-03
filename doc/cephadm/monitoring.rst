@@ -15,7 +15,7 @@ metrics on cluster utilization and performance.  Ceph users have three options:
    Ceph is running in Kubernetes with Rook).
 #. Skip the monitoring stack completely.  Some Ceph dashboard graphs will
    not be available.
-   
+
 The monitoring stack consists of `Prometheus <https://prometheus.io/>`_,
 Prometheus exporters (:ref:`mgr-prometheus`, `Node exporter
 <https://prometheus.io/docs/guides/node-exporter/>`_), `Prometheus Alert
@@ -77,8 +77,20 @@ monitoring by following the steps below.
 
      ceph orch apply grafana 1
 
-Cephadm handles the prometheus, grafana, and alertmanager
-configurations automatically.
+Cephadm takes care of the configuration of Prometheus, Grafana, and Alertmanager
+automatically.
+
+However, there is one exception to this rule. In a some setups, the Dashboard
+user's browser might not be able to access the URL to Grafana which is
+configured in Ceph Dashboard. The cluster being in a different DNS zone than the
+accessing user might be such a scenario.
+
+For this case, there is an extra configuration option for Ceph Dashboard, which
+can be used to configure the URL for accessing Grafana by the user's browser.
+This value will never be altered by cephadm. To set this configuration option,
+issue the following command::
+
+  $ ceph dashboard set-grafana-frontend-api-url <grafana-server-api>
 
 It may take a minute or two for services to be deployed.  Once
 completed, you should see something like this from ``ceph orch ls``
@@ -125,7 +137,7 @@ For example
      you have set the custom image for automatically.  You will need to
      manually update the configuration (image name and tag) to be able to
      install updates.
-     
+
      If you choose to go with the recommendations instead, you can reset the
      custom image you have set before.  After that, the default value will be
      used again.  Use ``ceph config rm`` to reset the configuration option

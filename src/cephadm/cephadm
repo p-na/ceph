@@ -946,8 +946,7 @@ def port_in_use(ctx, port_num):
     # type: (CephadmContext, int) -> bool
     """Detect whether a port is in use on the local machine - IPv4 and IPv6"""
     logger.info('Verifying port %d ...' % port_num)
-    def _port_in_use(af, address):
-        # type: (socket.AddressFamily, str) -> bool
+    def _port_in_use(af: socket.AddressFamily, address: str) -> bool:
         try:
             s = socket.socket(af, socket.SOCK_STREAM)
             attempt_bind(ctx, s, address, port_num)

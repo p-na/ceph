@@ -938,6 +938,7 @@ def attempt_bind(ctx, s, address, port):
             raise OSError(msg)
         elif e.errno == errno.EADDRNOTAVAIL:
             pass
+        raise e
     finally:
         s.close()
 

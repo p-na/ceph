@@ -955,7 +955,9 @@ def port_in_use(ctx, port_num):
             # If IPv4 or IPv6 is not supported, do not automatically return "occupied"
             if e.errno == errno.EAFNOSUPPORT:
                 return False
-            return True
+            elif e.errno == errno.EADDRINUSE:
+                return True
+            raise e
         else:
             return False
     return any(_port_in_use(af, address) for af, address in (

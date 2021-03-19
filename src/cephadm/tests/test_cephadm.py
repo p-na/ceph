@@ -17,9 +17,8 @@ import pytest
 
 from .fixtures import exporter
 
-with patch('builtins.open', create=True):
-    from importlib.machinery import SourceFileLoader
-    cd = SourceFileLoader('cephadm', 'cephadm').load_module()
+from cephadm import cephadm as cd
+
 
 class TestCephAdm(object):
 
@@ -32,8 +31,7 @@ class TestCephAdm(object):
         r = cd.get_unit_file(ctx, '9b9d7609-f4d5-4aba-94c8-effa764d96c9')
         assert 'Requires=docker.service' not in r
 
-    @mock.patch('cephadm.logger')
-    def test_attempt_bind(self, logger):
+    def test_attempt_bind(self):
         ctx = None
         address = None
         port = 0
@@ -42,6 +40,8 @@ class TestCephAdm(object):
             _os_error = OSError()
             _os_error.errno = errno
             return _os_error
+
+        cd.logger = mock.Mock()
 
         for side_effect, expected_exception in (
             (os_error(errno.EADDRINUSE), cd.PortOccupiedError),

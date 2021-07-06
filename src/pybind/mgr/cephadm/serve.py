@@ -10,6 +10,8 @@ from cephadm import remotes
 
 try:
     import remoto
+    from remoto.file_sync import _RSync
+    from remoto.backends import basic_remote_logger
     import execnet.gateway_bootstrap
 except ImportError:
     remoto = None
@@ -1290,6 +1292,15 @@ class CephadmServe:
             return self._deploy_cephadm_binary_conn(conn, host)
 
     def _deploy_cephadm_binary_conn(self, conn: "BaseConnection", host: str) -> None:
+
+        # https://github.com/alfredodeza/remoto/pull/64/files
+        def rsync_conn(conn, source, destination, logger=None):
+            logger = logger or basic_remote_logger()
+            sync = _RSync(source, logger=logger)
+            sync.add_target(conn.gateway, destination)
+
+            return sync.send()
+
         _out, _err, code = remoto.process.check(
             conn,
             ['mkdir', '-p', f'/var/lib/ceph/{self.mgr._cluster_fsid}'])
@@ -1297,12 +1308,12 @@ class CephadmServe:
             msg = f"Unable to deploy the cephadm binary to {host}: {_err}"
             self.log.warning(msg)
             raise OrchestratorError(msg)
-        _out, _err, code = remoto.process.check(
-            conn,
-            ['tee', '-', self.mgr.cephadm_binary_path],
-            stdin=self.mgr._cephadm.encode('utf-8'))
-        if code:
-            msg = f"Unable to deploy the cephadm binary to {host}: {_err}"
+
+        try:
+            rsync_conn(conn, self.mgr.get_ceph_option('cephadm_path'), self.mgr.cephadm_binary_path)
+        except Exception as err:
+            # The errors I found could be raised here are ValueError, AttributeError, IOError
+            msg = f"Unable to deploy the cephadm binary to {host}: {err}"
             self.log.warning(msg)
             raise OrchestratorError(msg)
 
